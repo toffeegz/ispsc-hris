@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ipcr_categories', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->string('description')->nullable();
+            $table->decimal('weight', 5, 2);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
