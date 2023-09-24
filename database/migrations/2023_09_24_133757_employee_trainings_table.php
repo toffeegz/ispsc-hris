@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('trainings', function (Blueprint $table) {
+        Schema::create('employee_training', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('title');
-            $table->string('description')->nullable();
-            $table->string('conducted_by')->nullable();
+            $table->uuid('employee_id');
+            $table->uuid('training_id');
+            $table->date('period_from')->nullable();
+            $table->date('period_to')->nullable();
+            $table->unsignedInteger('hours')->nullable(); 
+            $table->string('type_of_ld')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('trainings');
+        //
     }
 };
