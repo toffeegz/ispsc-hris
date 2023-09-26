@@ -10,6 +10,8 @@ use App\Repositories\Base\BaseRepositoryInterface;
 //
 use App\Repositories\User\UserRepository;
 use App\Repositories\User\UserRepositoryInterface;
+use App\Repositories\Verification\VerificationRepository;
+use App\Repositories\Verification\VerificationRepositoryInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(BaseRepositoryInterface::class, BaseRepository::class);
         // 
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(VerificationRepositoryInterface::class, VerificationRepository::class);
 
     }
 

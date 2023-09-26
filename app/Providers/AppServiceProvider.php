@@ -8,6 +8,8 @@ use App\Services\Utils\File\FileService;
 use App\Services\Utils\File\FileServiceInterface;
 use App\Services\Utils\Response\ResponseService;
 use App\Services\Utils\Response\ResponseServiceInterface;
+use App\Services\User\UserService;
+use App\Services\User\UserServiceInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(FileServiceInterface::class, FileService::class);
         $this->app->bind(ResponseServiceInterface::class, ResponseService::class);
+        $this->app->bind(UserServiceInterface::class, UserService::class);
     }
 
     /**
