@@ -16,6 +16,10 @@ return new class extends Migration
             $table->string('title');
             $table->string('description')->nullable();
             $table->string('conducted_by')->nullable();
+            $table->date('period_from')->nullable();
+            $table->date('period_to')->nullable();
+            $table->unsignedInteger('hours')->nullable(); 
+            $table->string('type_of_ld')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
