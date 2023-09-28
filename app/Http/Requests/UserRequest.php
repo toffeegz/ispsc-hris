@@ -4,8 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Route;
+use Illuminate\Validation\Rule;
 
-class StoreUserRequest extends FormRequest
+class UserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +23,17 @@ class StoreUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $id = Route::current()->parameter('id');
+        $user_id = $this->route('user'); // Get the id of the employee being updated from the request route parameters
+
+        $email_rules = [
+            'required',
+            'max:255',
+            'email',
+            Rule::unique('users')->ignore($user_id),
+        ];
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users' . $id,]
+            'email' => $email_rules
         ];
     }
 }
