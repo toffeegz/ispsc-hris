@@ -6,7 +6,6 @@ use App\Http\Requests\TrainingRequest as ModelRequest;
 use App\Models\Training;
 use App\Repositories\Training\TrainingRepositoryInterface;
 use App\Services\Utils\Response\ResponseServiceInterface;
-use App\Services\Training\TrainingServiceInterface;
 
 class TrainingController extends Controller
 {
