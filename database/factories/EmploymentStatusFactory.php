@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Generator as Faker;
+use Illuminate\Support\Arr;
+
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EmploymentStatus>
  */
@@ -17,7 +19,7 @@ class EmploymentStatusFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word,
+            'name' => Arr::random(config('hris_employee.employment_status')),
             'description' => $this->faker->paragraph,
         ];
     }
