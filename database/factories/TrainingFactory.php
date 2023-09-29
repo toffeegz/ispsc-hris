@@ -17,7 +17,7 @@ class TrainingFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence,
-            'description' => $this->faker->paragraph,
+            'description' => $this->faker->sentence,
             'conducted_by' => $this->faker->name,
             'period_from' => $this->faker->date,
             'period_to' => $this->faker->date,
