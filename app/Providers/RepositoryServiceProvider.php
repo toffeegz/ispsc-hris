@@ -8,6 +8,8 @@ use Illuminate\Support\ServiceProvider;
 use App\Repositories\Base\BaseRepository;
 use App\Repositories\Base\BaseRepositoryInterface;
 //
+use App\Repositories\Employee\EmployeeRepository;
+use App\Repositories\Employee\EmployeeRepositoryInterface;
 use App\Repositories\Training\TrainingRepository;
 use App\Repositories\Training\TrainingRepositoryInterface;
 use App\Repositories\User\UserRepository;
@@ -25,6 +27,7 @@ class RepositoryServiceProvider extends ServiceProvider
         // base
         $this->app->bind(BaseRepositoryInterface::class, BaseRepository::class);
         // 
+        $this->app->bind(EmployeeRepositoryInterface::class, EmployeeRepository::class);
         $this->app->bind(TrainingRepositoryInterface::class, TrainingRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(VerificationRepositoryInterface::class, VerificationRepository::class);

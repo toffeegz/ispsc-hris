@@ -2,65 +2,64 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreEmployeeRequest;
-use App\Http\Requests\UpdateEmployeeRequest;
+use App\Http\Requests\EmployeeStoreRequest;
 use App\Models\Employee;
+use App\Repositories\Employee\EmployeeRepositoryInterface;
+use App\Services\Utils\Response\ResponseServiceInterface;
 
 class EmployeeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private $modelService;
+    private $responseService;
+    private $name = 'Employee';
+    
+    public function __construct(
+        EmployeeRepositoryInterface $modelRepository, 
+        ResponseServiceInterface $responseService,
+    ) {
+        $this->modelRepository = $modelRepository;
+        $this->responseService = $responseService;
+    }
+
     public function index()
     {
-        //
+        $results = $this->modelRepository->lists(request(['search']));
+        return $this->responseService->successResponse($this->name, $results);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function archive()
     {
-        //
+        $results = $this->modelRepository->archives(request(['search']));
+        return $this->responseService->successResponse($this->name, $results);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreEmployeeRequest $request)
+    public function store(EmployeeStoreRequest $request)
     {
-        //
+        $result = $this->modelRepository->store($request->all());
+        return $this->responseService->storeResponse($this->name, $result);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Employee $employee)
+    public function show($id)
     {
-        //
+        $result = $this->modelRepository->show($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Employee $employee)
+    public function update(EmployeeUpdateRequest $request, $id)
     {
-        //
+        $result = $this->modelRepository->update($request->all(), $id);
+        return $this->responseService->updateResponse($this->name, $result);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateEmployeeRequest $request, Employee $employee)
+    public function delete(string $id)
     {
-        //
+        $result = $this->modelRepository->delete($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Employee $employee)
+    public function restore(string $id)
     {
-        //
+        $result = $this->modelRepository->restore($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 }
