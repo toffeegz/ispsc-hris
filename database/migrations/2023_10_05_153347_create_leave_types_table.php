@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id');
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('is_deletable')->default('YES');
+            $table->boolean('is_deletable')->default(true);
             $table->string('date_period')->nullable();
             $table->timestamps();
             $table->SoftDeletes();

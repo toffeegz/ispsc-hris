@@ -21,6 +21,7 @@ class LeaveTypeSeeder extends Seeder
                 'name' => $leaveTypeData['name'],
                 'description' => $leaveTypeData['description'],
                 'date_period' => $leaveTypeData['date_period'],
+                'is_deletable' => false
             ]);
         }
     }

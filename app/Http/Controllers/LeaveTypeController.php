@@ -2,65 +2,64 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreLeaveTypeRequest;
-use App\Http\Requests\UpdateLeaveTypeRequest;
+use App\Http\Requests\LeaveTypeRequest as ModelRequest;
 use App\Models\LeaveType;
+use App\Repositories\LeaveType\LeaveTypeRepositoryInterface;
+use App\Services\Utils\Response\ResponseServiceInterface;
 
 class LeaveTypeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private $modelService;
+    private $responseService;
+    private $name = 'LeaveType';
+    
+    public function __construct(
+        LeaveTypeRepositoryInterface $modelRepository, 
+        ResponseServiceInterface $responseService,
+    ) {
+        $this->modelRepository = $modelRepository;
+        $this->responseService = $responseService;
+    }
+
     public function index()
     {
-        //
+        $results = $this->modelRepository->lists(request(['search']));
+        return $this->responseService->successResponse($this->name, $results);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function archive()
     {
-        //
+        $results = $this->modelRepository->archives(request(['search']));
+        return $this->responseService->successResponse($this->name, $results);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreLeaveTypeRequest $request)
+    public function store(ModelRequest $request)
     {
-        //
+        $result = $this->modelRepository->create($request->all());
+        return $this->responseService->storeResponse($this->name, $result);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(LeaveType $leaveType)
+    public function show($id)
     {
-        //
+        $result = $this->modelRepository->show($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(LeaveType $leaveType)
+    public function update(ModelRequest $request, $id)
     {
-        //
+        $result = $this->modelRepository->update($request->all(), $id);
+        return $this->responseService->updateResponse($this->name, $result);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateLeaveTypeRequest $request, LeaveType $leaveType)
+    public function delete(string $id)
     {
-        //
+        $result = $this->modelRepository->delete($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(LeaveType $leaveType)
+    public function restore(string $id)
     {
-        //
+        $result = $this->modelRepository->restore($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 }
