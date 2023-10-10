@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Traits\Uuid;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Leave extends Model
+{
+    use HasFactory, Uuid, SoftDeletes;
+
+    protected $fillable = [
+        'employee_id',
+        'date_filed',
+        'date_start',
+        'date_end',
+        'time_start',
+        'time_end',
+        'leave_type_id',
+        'status',
+        'details_of_leave',
+        'disapproved_for',
+        'approved_for',
+        'approved_for_type',
+        'commutation',
+    ];
+
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when(isset($filters['status']), function ($query) use ($filters) {
+            $query->where('status', $filters['status']);
+        });
+
+        $search = $filters['search'] ?? null;
+        
+        $query->when($search, function ($query) use ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->whereHas('employee', function ($subQuery) use ($search) {
+                    $subQuery->where('first_name', 'like', '%' . $search . '%')
+                        ->orWhere('last_name', 'like', '%' . $search . '%')
+                        ->orWhere('employee_id', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('leave_type', function ($subQuery) use ($search) {
+                    $subQuery->where('name', 'like', '%' . $search . '%');
+                })
+                ->orWhere('date_start', 'like', '%' . $search . '%')
+                ->orWhere('date_end', 'like', '%' . $search . '%')
+                ->orWhere('details_of_leave', 'like', '%' . $search . '%');
+            });
+        });
+    }
+
+
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id');
+    }
+
+    public function leave_type()
+    {
+        return $this->belongsTo(LeaveType::class, 'leave_type_id');
+    }
+
+}

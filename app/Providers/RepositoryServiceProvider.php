@@ -12,6 +12,8 @@ use App\Repositories\EducationalBackground\EducationalBackgroundRepository;
 use App\Repositories\EducationalBackground\EducationalBackgroundRepositoryInterface;
 use App\Repositories\Employee\EmployeeRepository;
 use App\Repositories\Employee\EmployeeRepositoryInterface;
+use App\Repositories\Leave\LeaveRepository;
+use App\Repositories\Leave\LeaveRepositoryInterface;
 use App\Repositories\Training\TrainingRepository;
 use App\Repositories\Training\TrainingRepositoryInterface;
 use App\Repositories\User\UserRepository;
@@ -31,6 +33,7 @@ class RepositoryServiceProvider extends ServiceProvider
         // 
         $this->app->bind(EducationalBackgroundRepositoryInterface::class, EducationalBackgroundRepository::class);
         $this->app->bind(EmployeeRepositoryInterface::class, EmployeeRepository::class);
+        $this->app->bind(LeaveRepositoryInterface::class, LeaveRepository::class);
         $this->app->bind(TrainingRepositoryInterface::class, TrainingRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(VerificationRepositoryInterface::class, VerificationRepository::class);
