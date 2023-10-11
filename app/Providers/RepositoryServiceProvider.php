@@ -18,6 +18,8 @@ use App\Repositories\Leave\LeaveRepository;
 use App\Repositories\Leave\LeaveRepositoryInterface;
 use App\Repositories\LeaveType\LeaveTypeRepository;
 use App\Repositories\LeaveType\LeaveTypeRepositoryInterface;
+use App\Repositories\Position\PositionRepository;
+use App\Repositories\Position\PositionRepositoryInterface;
 use App\Repositories\Training\TrainingRepository;
 use App\Repositories\Training\TrainingRepositoryInterface;
 use App\Repositories\User\UserRepository;
@@ -40,6 +42,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EmployeeRepositoryInterface::class, EmployeeRepository::class);
         $this->app->bind(LeaveRepositoryInterface::class, LeaveRepository::class);
         $this->app->bind(LeaveTypeRepositoryInterface::class, LeaveTypeRepository::class);
+        $this->app->bind(PositionRepositoryInterface::class, PositionRepository::class);
         $this->app->bind(TrainingRepositoryInterface::class, TrainingRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(VerificationRepositoryInterface::class, VerificationRepository::class);
