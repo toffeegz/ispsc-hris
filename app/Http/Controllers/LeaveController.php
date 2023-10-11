@@ -38,10 +38,14 @@ class LeaveController extends Controller
 
     public function archive()
     {
-        $searchArray = request()->input('search', []);
+        $search = request()->input('search', null);
+        $status = request()->input('status', null);
         $formattedSearchArray = [];
-        foreach ($searchArray as $criteria) {
-            $formattedSearchArray[$criteria['field']] = $criteria['value'];
+        if ($search !== null) {
+            $formattedSearchArray['search'] = $search;
+        }
+        if ($status !== null) {
+            $formattedSearchArray['status'] = $status;
         }
         $results = $this->modelRepository->archives($formattedSearchArray, ['employee', 'leave_type']);
         return $this->responseService->successResponse($this->name, $results);
