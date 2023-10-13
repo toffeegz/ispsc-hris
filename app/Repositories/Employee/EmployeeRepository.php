@@ -13,13 +13,6 @@ use Illuminate\Support\Facades\DB;
 
 class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInterface
 {
-
-    /**
-     * EmployeeRepository constructor.
-     *
-     * @param Employee $model
-     */
-
     protected $trainingRepository;
 
     public function __construct(Employee $model, TrainingRepositoryInterface $trainingRepository)
@@ -54,14 +47,11 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
             }
 
             DB::commit();
-
             return $employee;
         } catch (\Exception $e) {
             DB::rollBack();
-
             return $e->getMessage();
         }
-
     }
 
     public function educationalBackgrounds(array $attributes, $employee_id, $is_update = false)

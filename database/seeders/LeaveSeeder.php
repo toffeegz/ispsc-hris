@@ -4,15 +4,15 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Attendance;
+use App\Models\Leave;
 
-class AttendanceSeeder extends Seeder
+class LeaveSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Attendance::factory()->count(20)->create();
+        Leave::factory()->count(20)->create();
     }
 }

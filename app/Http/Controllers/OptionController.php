@@ -8,6 +8,7 @@ use App\Services\Utils\Response\ResponseServiceInterface;
 use App\Models\Department;
 use App\Models\Position;
 use App\Models\EmploymentStatus;
+use App\Models\LeaveType;
 
 class OptionController extends Controller
 {
@@ -41,6 +42,12 @@ class OptionController extends Controller
     public function employment_statuses()
     {
         $results = EmploymentStatus::select(['id', 'name'])->get();
+        return $this->responseService->successResponse($this->name, $results);
+    }
+
+    public function leave_types()
+    {
+        $results = LeaveType::select(['id', 'name'])->get();
         return $this->responseService->successResponse($this->name, $results);
     }
 }

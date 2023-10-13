@@ -19,5 +19,10 @@ return [
         'College',
         'Graduate Studies',
     ],
+    'employment_status' => [
+        'Regular',
+        'Probation',
+        'Training'
+    ],
 
 ];

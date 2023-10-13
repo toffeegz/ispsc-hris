@@ -7,14 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Position extends Model
+class LeaveType extends Model
 {
     use HasFactory, Uuid, SoftDeletes;
 
     protected $fillable = [
         'name',
         'description',
-        'department_id',
+        'is_deletable',
+        'date_period',
     ];
 
     public function scopeFilter($query, array $filters)
@@ -24,15 +25,10 @@ class Position extends Model
             ->when($filters['search'] ?? false, 
             function($query) use($search) {
                 $query->where(function($query) use($search) {
-                    $query->where('title', 'like', '%' . $search . '%')
+                    $query->where('name', 'like', '%' . $search . '%')
                         ->orWhere('description', 'like', '%' . $search . '%');
                 });
             }
         );
-    }
-
-    public function department()
-    {
-        return $this->belongsTo(Department::class, 'department_id');
     }
 }

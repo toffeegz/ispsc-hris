@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DepartmentRequest as ModelRequest;
-use App\Models\Department;
-use App\Repositories\Department\DepartmentRepositoryInterface;
+use App\Http\Requests\LeaveRequest as ModelRequest;
+use App\Models\Leave;
+use App\Repositories\Leave\LeaveRepositoryInterface;
 use App\Services\Utils\Response\ResponseServiceInterface;
 
-class DepartmentController extends Controller
+class LeaveController extends Controller
 {
     private $modelService;
     private $responseService;
-    private $name = 'Department';
+    private $name = 'Leave';
     
     public function __construct(
-        DepartmentRepositoryInterface $modelRepository, 
+        LeaveRepositoryInterface $modelRepository, 
         ResponseServiceInterface $responseService,
     ) {
         $this->modelRepository = $modelRepository;
@@ -23,13 +23,31 @@ class DepartmentController extends Controller
 
     public function index()
     {
-        $results = $this->modelRepository->lists(request(['search']));
+        $search = request()->input('search', null);
+        $status = request()->input('status', null);
+        $formattedSearchArray = [];
+        if ($search !== null) {
+            $formattedSearchArray['search'] = $search;
+        }
+        if ($status !== null) {
+            $formattedSearchArray['status'] = $status;
+        }
+        $results = $this->modelRepository->lists($formattedSearchArray, ['employee', 'leave_type']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
     public function archive()
     {
-        $results = $this->modelRepository->archives(request(['search']));
+        $search = request()->input('search', null);
+        $status = request()->input('status', null);
+        $formattedSearchArray = [];
+        if ($search !== null) {
+            $formattedSearchArray['search'] = $search;
+        }
+        if ($status !== null) {
+            $formattedSearchArray['status'] = $status;
+        }
+        $results = $this->modelRepository->archives($formattedSearchArray, ['employee', 'leave_type']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
@@ -41,7 +59,7 @@ class DepartmentController extends Controller
 
     public function show($id)
     {
-        $result = $this->modelRepository->show($id);
+        $result = $this->modelRepository->show($id, ['employee', 'leave_type']);
         return $this->responseService->successResponse($this->name, $result);
     }
 
@@ -63,4 +81,3 @@ class DepartmentController extends Controller
         return $this->responseService->successResponse($this->name, $result);
     }
 }
-

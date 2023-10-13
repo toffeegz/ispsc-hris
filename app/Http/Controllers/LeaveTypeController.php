@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DepartmentRequest as ModelRequest;
-use App\Models\Department;
-use App\Repositories\Department\DepartmentRepositoryInterface;
+use App\Http\Requests\LeaveTypeRequest as ModelRequest;
+use App\Models\LeaveType;
+use App\Repositories\LeaveType\LeaveTypeRepositoryInterface;
 use App\Services\Utils\Response\ResponseServiceInterface;
 
-class DepartmentController extends Controller
+class LeaveTypeController extends Controller
 {
     private $modelService;
     private $responseService;
-    private $name = 'Department';
+    private $name = 'LeaveType';
     
     public function __construct(
-        DepartmentRepositoryInterface $modelRepository, 
+        LeaveTypeRepositoryInterface $modelRepository, 
         ResponseServiceInterface $responseService,
     ) {
         $this->modelRepository = $modelRepository;
@@ -63,4 +63,3 @@ class DepartmentController extends Controller
         return $this->responseService->successResponse($this->name, $result);
     }
 }
-

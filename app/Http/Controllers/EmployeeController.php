@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\EmployeeStoreRequest;
+use App\Http\Requests\EmployeeUpdateRequest;
 use App\Models\Employee;
 use App\Repositories\Employee\EmployeeRepositoryInterface;
 use App\Services\Utils\Response\ResponseServiceInterface;
@@ -23,13 +24,13 @@ class EmployeeController extends Controller
 
     public function index()
     {
-        $results = $this->modelRepository->lists(request(['search']));
+        $results = $this->modelRepository->lists(request(['search']), ['department', 'position', 'trainings', 'educational_backgrounds']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
     public function archive()
     {
-        $results = $this->modelRepository->archives(request(['search']));
+        $results = $this->modelRepository->archives(request(['search']), ['department', 'position', 'trainings', 'educational_backgrounds']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
@@ -41,7 +42,7 @@ class EmployeeController extends Controller
 
     public function show($id)
     {
-        $result = $this->modelRepository->show($id);
+        $result = $this->modelRepository->show($id, ['department', 'position', 'trainings', 'educational_backgrounds']);
         return $this->responseService->successResponse($this->name, $result);
     }
 

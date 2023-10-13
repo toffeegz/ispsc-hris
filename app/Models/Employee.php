@@ -48,4 +48,24 @@ class Employee extends Model
             }
         );
     }
+    
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function position()
+    {
+        return $this->belongsTo(Position::class, 'position_id');
+    }
+
+    public function trainings()
+    {
+        return $this->belongsToMany(Training::class, 'employee_trainings');
+    }
+
+    public function educational_backgrounds()
+    {
+        return $this->hasMany(EducationalBackground::class);
+    }
 }

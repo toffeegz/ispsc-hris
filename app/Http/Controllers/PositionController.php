@@ -2,65 +2,65 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePositionRequest;
-use App\Http\Requests\UpdatePositionRequest;
+use App\Http\Requests\PositionRequest as ModelRequest;
 use App\Models\Position;
+use App\Repositories\Position\PositionRepositoryInterface;
+use App\Services\Utils\Response\ResponseServiceInterface;
 
-class PositionController extends Controller
+class PositionController extends Controller 
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private $modelService;
+    private $responseService;
+    private $name = 'Position';
+    
+    public function __construct(
+        PositionRepositoryInterface $modelRepository, 
+        ResponseServiceInterface $responseService,
+    ) {
+        $this->modelRepository = $modelRepository;
+        $this->responseService = $responseService;
+    }
+
     public function index()
     {
-        //
+        $results = $this->modelRepository->lists(request(['search']), ['department']);
+        return $this->responseService->successResponse($this->name, $results);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function archive()
     {
-        //
+        $results = $this->modelRepository->archives(request(['search']), ['department']);
+        return $this->responseService->successResponse($this->name, $results);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePositionRequest $request)
+    public function store(ModelRequest $request)
     {
-        //
+        $result = $this->modelRepository->create($request->all());
+        return $this->responseService->storeResponse($this->name, $result);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Position $position)
+    public function show($id)
     {
-        //
+        $result = $this->modelRepository->show($id, ['department']);
+        return $this->responseService->successResponse($this->name, $result);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Position $position)
+    public function update(ModelRequest $request, $id)
     {
-        //
+        $result = $this->modelRepository->update($request->all(), $id);
+        return $this->responseService->updateResponse($this->name, $result);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePositionRequest $request, Position $position)
+    public function delete(string $id)
     {
-        //
+        $result = $this->modelRepository->delete($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Position $position)
+    public function restore(string $id)
     {
-        //
+        $result = $this->modelRepository->restore($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 }
+
