@@ -2,65 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreAttendanceRequest;
-use App\Http\Requests\UpdateAttendanceRequest;
+use App\Http\Requests\AttendanceRequest as ModelRequest;
 use App\Models\Attendance;
+use App\Repositories\Attendance\AttendanceRepositoryInterface;
+use App\Services\Utils\Response\ResponseServiceInterface;
 
 class AttendanceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private $modelService;
+    private $responseService;
+    private $name = 'Attendance';
+    
+    public function __construct(
+        AttendanceRepositoryInterface $modelRepository, 
+        ResponseServiceInterface $responseService,
+    ) {
+        $this->modelRepository = $modelRepository;
+        $this->responseService = $responseService;
+    }
+
     public function index()
     {
-        //
+        $results = $this->modelRepository->lists(request(['search']), ['employee']);
+        return $this->responseService->successResponse($this->name, $results);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function archive()
     {
-        //
+        $results = $this->modelRepository->archives(request(['search']), ['employee']);
+        return $this->responseService->successResponse($this->name, $results);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreAttendanceRequest $request)
+    public function show($id)
     {
-        //
+        $result = $this->modelRepository->show($id, ['employee']);
+        return $this->responseService->successResponse($this->name, $result);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Attendance $attendance)
+    public function delete(string $id)
     {
-        //
+        $result = $this->modelRepository->delete($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Attendance $attendance)
+    public function restore(string $id)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateAttendanceRequest $request, Attendance $attendance)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Attendance $attendance)
-    {
-        //
+        $result = $this->modelRepository->restore($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 }
+
+

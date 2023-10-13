@@ -12,8 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attendances', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->uuid('employee_id');
+            $table->datetime('time_in');
+            $table->datetime('time_out');
+            $table->integer('undertime')->nullable();
+            $table->boolean('is_flexible')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
