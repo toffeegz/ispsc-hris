@@ -35,7 +35,11 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
             
             // EDUCATIONAL BACKGROUNDS
             if(isset($attributes['educational_backgrounds'])) {
-                $this->educationalBackgrounds($attributes['educational_backgrounds'], $employee->id);
+                $educational_backgrounds = $attributes['educational_backgrounds'];
+                foreach($educational_backgrounds as $educational_background) {
+                    $attribute['employee_id'] = $employee->id;
+                    EducationalBackground::create($educational_background);
+                }
             }
 
             // TRAININGS
@@ -76,23 +80,43 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
         }
     }
 
-    public function educationalBackgrounds(array $attributes, $employee_id, $is_update = false)
+    public function education(array $attributes, $id)
     {
-        if($is_update === false) {
+        DB::beginTransaction();
+        try {
             foreach($attributes as $attribute) {
-                $attribute['employee_id'] = $employee_id;
-                EducationalBackground::create($attribute);
-            }
-        } else {
-            foreach($attributes as $attribute) {
-                foreach ($attributes as $attribute) {
-                    $educationalBackground = EducationalBackground::find($attribute['id']);
-                
-                    if ($educationalBackground) {
-                        $educationalBackground->update($attribute);
-                    }
+                $attribute["employee_id"] = $id;
+                if (isset($attribute["id"])) {
+                    EducationalBackground::findOrFail($attribute['id'])->update($attribute);
+                } elseif (isset($attribute["level"])) {
+                    EducationalBackground::create($attribute);
                 }
             }
+            DB::commit();
+            return "Educational Background Updated Successfully!";
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
+
+    public function training(array $attributes, $id) 
+    {
+        DB::beginTransaction();
+        try {
+            foreach($attributes as $attribute) {
+                $attribute["employee_id"] = $id;
+                if (isset($attribute["id"])) {
+                    EmployeeTraining::findOrFail($attribute['id'])->update($attribute);
+                } else {
+                    EmployeeTraining::create($attribute);
+                }
+            }
+            DB::commit();
+            return "Trainings & Seminars Updated Successfully!";
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
         }
     }
 }
