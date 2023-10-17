@@ -10,5 +10,6 @@ Route::prefix('attendances')->group(function() {
     Route::delete('/{attendance}', [AttendanceController::class, 'delete'])->name('attendance.delete');
     Route::get('/restore/{attendance}', [AttendanceController::class, 'restore'])->name('attendance.restore');
     
-    Route::post('import', [AttendanceController::class, 'import'])->name('attendance.import');
+    Route::post('import-dat', [AttendanceController::class, 'importDat'])->name('attendance.importDat');
+    Route::post('import-xlsx', [AttendanceController::class, 'importXlsx'])->name('attendance.importXlsx');
 });

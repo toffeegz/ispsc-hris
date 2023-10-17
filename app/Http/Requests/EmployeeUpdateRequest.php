@@ -40,6 +40,7 @@ class EmployeeUpdateRequest extends FormRequest
             'date_hired' => ['nullable', 'date'],
             'department_id' => ['nullable', 'exists:departments,id'],
             'position_id' => ['nullable', 'exists:positions,id'],
+            'is_flexible' => ['required', 'boolean'],
         ];
     }
 }
