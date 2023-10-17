@@ -11,22 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('leave_types', function (Blueprint $table) {
+        Schema::create('schedules', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->text('description')->nullable();
+            $table->string('name'); 
+            $table->boolean('is_default')->default(false);
+            $table->time('time_in');
+            $table->time('time_out'); 
             $table->boolean('is_deletable')->default(true);
-            $table->string('date_period')->nullable();
             $table->timestamps();
             $table->SoftDeletes();
         });
     }
 
     /**
-    * Reverse the migrations.
-    */
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('leave_types');
+        Schema::dropIfExists('schedules');
     }
 };

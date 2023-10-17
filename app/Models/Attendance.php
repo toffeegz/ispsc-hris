@@ -13,10 +13,12 @@ class Attendance extends Model
 
     protected $fillable = [
         'employee_id',
+        'date',
         'time_in',
         'time_out',
+        'schedule_time_in',
+        'schedule_time_out',
         'undertime',
-        'is_flexible',
     ];
 
     protected $appends = ["undertime_str"];
