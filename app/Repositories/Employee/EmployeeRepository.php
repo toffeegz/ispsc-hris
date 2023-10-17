@@ -5,6 +5,7 @@ namespace App\Repositories\Employee;
 use App\Models\Employee;
 use App\Models\EmployeeTraining;
 use App\Models\EducationalBackground;
+use App\Models\Schedule;
 use Illuminate\Support\Carbon;
 use App\Repositories\Base\BaseRepository;
 use App\Repositories\Training\TrainingRepositoryInterface;
@@ -26,11 +27,19 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
         DB::beginTransaction();
         try {
             //
+            if($attributes['is_flexible'] === 1) {
+                $schedule = Schedule::where('is_default',false)->first();
+                $attributes['schedule_id'] = $schedule->id;
+            }
             $employee = $this->create($attributes);
-
+            
             // EDUCATIONAL BACKGROUNDS
             if(isset($attributes['educational_backgrounds'])) {
-                $this->educationalBackgrounds($attributes['educational_backgrounds'], $employee->id);
+                $educational_backgrounds = $attributes['educational_backgrounds'];
+                foreach($educational_backgrounds as $educational_background) {
+                    $attribute['employee_id'] = $employee->id;
+                    EducationalBackground::create($educational_background);
+                }
             }
 
             // TRAININGS
@@ -54,23 +63,60 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
         }
     }
 
-    public function educationalBackgrounds(array $attributes, $employee_id, $is_update = false)
+    public function edit(array $attributes, $id)
     {
-        if($is_update === false) {
-            foreach($attributes as $attribute) {
-                $attribute['employee_id'] = $employee_id;
-                EducationalBackground::create($attribute);
+        DB::beginTransaction();
+        try {
+            if($attributes['is_flexible'] === 1) {
+                $schedule = Schedule::where('is_default',false)->first();
+                $attributes['schedule_id'] = $schedule->id;
             }
-        } else {
+            // return $attributes;
+            $employee = $this->update($attributes, $id);
+            return $employee;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
+
+    public function education(array $attributes, $id)
+    {
+        DB::beginTransaction();
+        try {
             foreach($attributes as $attribute) {
-                foreach ($attributes as $attribute) {
-                    $educationalBackground = EducationalBackground::find($attribute['id']);
-                
-                    if ($educationalBackground) {
-                        $educationalBackground->update($attribute);
-                    }
+                $attribute["employee_id"] = $id;
+                if (isset($attribute["id"])) {
+                    EducationalBackground::findOrFail($attribute['id'])->update($attribute);
+                } elseif (isset($attribute["level"])) {
+                    EducationalBackground::create($attribute);
                 }
             }
+            DB::commit();
+            return "Educational Background Updated Successfully!";
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
+
+    public function training(array $attributes, $id) 
+    {
+        DB::beginTransaction();
+        try {
+            foreach($attributes as $attribute) {
+                $attribute["employee_id"] = $id;
+                if (isset($attribute["id"])) {
+                    EmployeeTraining::findOrFail($attribute['id'])->update($attribute);
+                } else {
+                    EmployeeTraining::create($attribute);
+                }
+            }
+            DB::commit();
+            return "Trainings & Seminars Updated Successfully!";
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
         }
     }
 }

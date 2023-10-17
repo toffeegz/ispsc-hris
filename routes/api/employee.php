@@ -11,5 +11,6 @@ Route::prefix('employees')->group(function() {
     Route::put('/{employee}', [EmployeeController::class, 'update'])->name('employee.update');
     Route::delete('/{employee}', [EmployeeController::class, 'delete'])->name('employee.delete');
     Route::get('/restore/{employee}', [EmployeeController::class, 'restore'])->name('employee.restore');
-    Route::post('/educational_background/{educ_id}', [EmployeeController::class, 'educational_background'])->name('employee.educational_background');
+    Route::post('/education/{employee}', [EmployeeController::class, 'education'])->name('employee.education');
+    Route::post('/training/{employee}', [EmployeeController::class, 'training'])->name('employee.training');
 });
