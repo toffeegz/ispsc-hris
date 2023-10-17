@@ -29,7 +29,10 @@ class Employee extends Model
         'user_id',
         'department_id',
         'position_id',
+        'schedule_id',
     ];
+
+    protected $appends = ['full_name'];
 
     public function scopeFilter($query, array $filters)
     {
@@ -47,6 +50,23 @@ class Employee extends Model
                 });
             }
         );
+    }
+
+    public function getFullNameAttribute()
+    {
+        // Assuming that 'first_name', 'middle_name', and 'last_name' are columns in your Employee model
+        $full_name = $this->first_name;
+
+        // Check if middle name exists
+        if ($this->middle_name) {
+            // Get the first character of the middle name as the initial
+            $middle_initial = substr($this->middle_name, 0, 1);
+            $full_name .= ' ' . $middle_initial . '.';
+        }
+
+        $full_name .= ' ' . $this->last_name;
+
+        return $full_name;
     }
     
     public function department()
@@ -68,4 +88,21 @@ class Employee extends Model
     {
         return $this->hasMany(EducationalBackground::class);
     }
+
+    public function schedule()
+    {
+        return $this->belongsTo(Schedule::class, 'schedule_id')->withDefault(function ($schedule) {
+            $defaultSchedule = Schedule::where('is_default', true)->first();
+            if ($defaultSchedule) {
+                $schedule->name = $defaultSchedule->name;
+                $schedule->is_default = $defaultSchedule->is_default;
+                $schedule->time_in = $defaultSchedule->time_in;
+                $schedule->time_out = $defaultSchedule->time_out;
+                $schedule->is_deletable = $defaultSchedule->is_deletable;
+            }
+        });
+    }
+
+
+
 }
