@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('leave_types', function (Blueprint $table) {
-            $table->uuid('id');
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->text('description')->nullable();
             $table->boolean('is_deletable')->default(true);

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('leaves', function (Blueprint $table) {
-            $table->uuid('id');
+            $table->uuid('id')->primary();
             $table->uuid('employee_id');
             $table->date('date_filed');
             $table->date('date_start');
