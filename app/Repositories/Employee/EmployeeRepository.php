@@ -5,6 +5,7 @@ namespace App\Repositories\Employee;
 use App\Models\Employee;
 use App\Models\EmployeeTraining;
 use App\Models\EducationalBackground;
+use App\Models\Schedule;
 use Illuminate\Support\Carbon;
 use App\Repositories\Base\BaseRepository;
 use App\Repositories\Training\TrainingRepositoryInterface;
@@ -26,8 +27,12 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
         DB::beginTransaction();
         try {
             //
+            if($attributes['is_flexible'] === 1) {
+                $schedule = Schedule::where('is_default',false)->first();
+                $attributes['schedule_id'] = $schedule->id;
+            }
             $employee = $this->create($attributes);
-
+            
             // EDUCATIONAL BACKGROUNDS
             if(isset($attributes['educational_backgrounds'])) {
                 $this->educationalBackgrounds($attributes['educational_backgrounds'], $employee->id);
@@ -47,6 +52,23 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
             }
 
             DB::commit();
+            return $employee;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
+
+    public function edit(array $attributes, $id)
+    {
+        DB::beginTransaction();
+        try {
+            if($attributes['is_flexible'] === 1) {
+                $schedule = Schedule::where('is_default',false)->first();
+                $attributes['schedule_id'] = $schedule->id;
+            }
+            // return $attributes;
+            $employee = $this->update($attributes, $id);
             return $employee;
         } catch (\Exception $e) {
             DB::rollBack();

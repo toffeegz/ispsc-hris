@@ -40,16 +40,16 @@ class EmployeeController extends Controller
         return $this->responseService->storeResponse($this->name, $result);
     }
 
+    public function update(EmployeeUpdateRequest $request, $id)
+    {
+        $result = $this->modelRepository->edit($request->all(), $id);
+        return $this->responseService->updateResponse($this->name, $result);
+    }
+
     public function show($id)
     {
         $result = $this->modelRepository->show($id, ['department', 'position', 'trainings', 'educational_backgrounds']);
         return $this->responseService->successResponse($this->name, $result);
-    }
-
-    public function update(EmployeeUpdateRequest $request, $id)
-    {
-        $result = $this->modelRepository->update($request->all(), $id);
-        return $this->responseService->updateResponse($this->name, $result);
     }
 
     public function delete(string $id)
