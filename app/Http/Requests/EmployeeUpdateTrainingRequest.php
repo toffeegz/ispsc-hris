@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class EmployeeTrainingUpdateRequest extends FormRequest
+class EmployeeUpdateTrainingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,19 +22,13 @@ class EmployeeTrainingUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $employeeId = $this->route('employee'); // Get the id of the employee being updated from the request route parameters
-
         return [
-            'trainings.*.id' => [ // Check if each education entry has an ID
-                'nullable', // It can be null if you're creating a new entry
-                Rule::exists('employee_trainings', 'id')->where('employee_id', $employeeId),
+            'employee_id' => [
+                'required',
+                'exists:employees,id'
             ],
             'trainings' => ['nullable', 'array'], // Array of training records
-            'trainings.*.title' => [
-                'required',
-                'string',
-                Rule::unique('employee_trainings', 'title')->where('employee_id', $employeeId),
-            ], // Validation for each title in the array
+            'trainings.*.title' => ['required', 'string'],
             'trainings.*.description' => ['nullable', 'string'],
             'trainings.*.conducted_by' => ['nullable', 'string'],
             'trainings.*.period_from' => ['nullable', 'date'],

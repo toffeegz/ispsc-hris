@@ -4,6 +4,7 @@ namespace App\Repositories\Employee;
 
 use App\Models\Employee;
 use App\Models\EmployeeTraining;
+use App\Models\Training;
 use App\Models\EducationalBackground;
 use App\Models\Schedule;
 use Illuminate\Support\Carbon;
@@ -104,14 +105,28 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
     {
         DB::beginTransaction();
         try {
-            foreach($attributes as $attribute) {
-                $attribute["employee_id"] = $id;
-                if (isset($attribute["id"])) {
-                    EmployeeTraining::findOrFail($attribute['id'])->update($attribute);
-                } else {
-                    EmployeeTraining::create($attribute);
+            $employee = Employee::find($id);
+            // Create or update training records
+            foreach ($attributes as $attribute) {
+                $training = Training::firstOrNew([
+                    'title' => $attribute['title'],
+                    'description' => $attribute['description'],
+                    'conducted_by' => $attribute['conducted_by'],
+                    // Add other fields here
+                ]);
+
+                $training->save();
+
+                // Check if the training is already associated with the employee
+                if (!$employee->trainings->contains($training->id)) {
+                    // Use syncWithoutDetaching to attach the training record
+                    $employee->trainings()->syncWithoutDetaching([$training->id]);
                 }
             }
+
+            // Detach training records that are not in the provided list
+            $employee->trainings()->whereNotIn('id', collect($attributes)->pluck('id'))->detach();
+
             DB::commit();
             return "Trainings & Seminars Updated Successfully!";
         } catch (\Exception $e) {
