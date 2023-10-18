@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\EmployeeStoreRequest;
 use App\Http\Requests\EmployeeUpdateRequest;
-use App\Http\Requests\EmployeeEducationUpdateRequest;
+use App\Http\Requests\EmployeeUpdateEducationRequest;
+use App\Http\Requests\EmployeeUpdateTrainingRequest;
 use App\Models\Employee;
 use App\Repositories\Employee\EmployeeRepositoryInterface;
 use App\Services\Utils\Response\ResponseServiceInterface;
@@ -65,13 +66,13 @@ class EmployeeController extends Controller
         return $this->responseService->successResponse($this->name, $result);
     }
 
-    public function education(EmployeeEducationUpdateRequest $request, $id)
+    public function education(EmployeeUpdateEducationRequest $request, $id)
     {
         $result = $this->modelRepository->education($request->educations, $id);
         return $this->responseService->updateResponse($this->name, $result);
     }
 
-    public function training(EmployeeEducationUpdateRequest $request, $id)
+    public function training(EmployeeUpdateTrainingRequest $request, $id)
     {
         $result = $this->modelRepository->training($request->trainings, $id);
         return $this->responseService->updateResponse($this->name, $result);
