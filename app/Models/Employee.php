@@ -32,7 +32,7 @@ class Employee extends Model
         'schedule_id',
     ];
 
-    protected $appends = ['full_name'];
+    protected $appends = ['full_name', 'is_flexible'];
 
     public function scopeFilter($query, array $filters)
     {
@@ -67,6 +67,19 @@ class Employee extends Model
         $full_name .= ' ' . $this->last_name;
 
         return $full_name;
+    }
+
+    public function getIsFlexibleAttribute()
+    {
+        // Assuming you have a relationship to the Schedule model named 'schedule'
+        $schedule = $this->schedule;
+
+        if ($schedule) {
+            // Replace this condition with your specific logic to determine flexibility
+            return !$schedule->is_default;
+        }
+
+        return false; // Return a default value in case there's no associated schedule
     }
     
     public function department()
