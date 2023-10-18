@@ -38,7 +38,7 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
             if(isset($attributes['educational_backgrounds'])) {
                 $educational_backgrounds = $attributes['educational_backgrounds'];
                 foreach($educational_backgrounds as $educational_background) {
-                    $attribute['employee_id'] = $employee->id;
+                    $educational_background['employee_id'] = $employee->id;
                     EducationalBackground::create($educational_background);
                 }
             }
@@ -49,7 +49,7 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
                 foreach($trainings as $training) {
                     $training_result = $this->trainingRepository->create($training);
                     // Attach the training to the employee
-                    EmployeeTraining::create([
+                    EmployeeTraining::insert([
                         'employee_id' => $employee->id,
                         'training_id' => $training_result->id,
                     ]);
