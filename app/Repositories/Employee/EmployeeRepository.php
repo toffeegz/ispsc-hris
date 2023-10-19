@@ -72,8 +72,8 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
                 $schedule = Schedule::where('is_default',false)->first();
                 $attributes['schedule_id'] = $schedule->id;
             }
-            // return $attributes;
             $employee = $this->update($attributes, $id);
+            DB::commit();
             return $employee;
         } catch (\Exception $e) {
             DB::rollBack();
