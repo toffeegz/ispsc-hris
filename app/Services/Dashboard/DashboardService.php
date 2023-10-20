@@ -77,7 +77,7 @@ class DashboardService implements DashboardServiceInterface
             } else {
                 // If there are no employees in the department, add it to the result with no late occurrences
                 $tardinessData[] = [
-                    'department' => $department->name,
+                    'department' => $department->acronym,
                     'average_tardiness_minutes' => 0,
                     'average_tardiness_time' => '0 mins',
                     'total_occurrences' => 0,
