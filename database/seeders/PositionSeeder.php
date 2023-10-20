@@ -15,7 +15,7 @@ class PositionSeeder extends Seeder
     public function run(): void
     {
         $departments = [
-            "College of Teacher Education" =>  [
+            "CTE" =>  [
                 [
                     "name" =>  "Educational Specialist II",
                     "description" =>  "Responsible for curriculum development and educational planning."
@@ -29,7 +29,7 @@ class PositionSeeder extends Seeder
                     "description" =>  "Teaches language and communication skills to students."
                 ]
             ],
-            "College of Arts and Sciences" =>  [
+            "CAS" =>  [
                 [
                     "name" =>  "Research Analyst II",
                     "description" =>  "Conducts research and data analysis in various fields."
@@ -43,7 +43,7 @@ class PositionSeeder extends Seeder
                     "description" =>  "Manages library resources and assists students with research."
                 ]
             ],
-            "College of Business Education" =>  [
+            "CBE" =>  [
                 [
                     "name" =>  "Finance Manager II",
                     "description" =>  "Manages financial operations and budgeting for the college."
@@ -57,7 +57,7 @@ class PositionSeeder extends Seeder
                     "description" =>  "Provides guidance to aspiring entrepreneurs and business students."
                 ]
             ],
-            "School of Criminal Justice Education" =>  [
+            "CJE" =>  [
                 [
                     "name" =>  "Criminal Investigator II",
                     "description" =>  "Conducts criminal investigations and gathers evidence."
@@ -71,7 +71,7 @@ class PositionSeeder extends Seeder
                     "description" =>  "Offers legal guidance and support to students interested in law."
                 ]
             ],
-            "Administrative" =>  [
+            "ACAD" =>  [
                 [
                     'name' => 'Admin Aide III (driver II)',
                     'description' => 'Responsible for providing driving services and assisting in administrative tasks.',
@@ -144,7 +144,7 @@ class PositionSeeder extends Seeder
         ];
         
         foreach($departments as $key => $positions) {
-            $department = Department::where('name', $key)->first();
+            $department = Department::where('acronym', $key)->first();
             foreach ($positions as $position) {
                 $position['department_id'] = $department->id;
                 Position::create($position);
