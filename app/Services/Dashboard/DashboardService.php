@@ -97,9 +97,18 @@ class DashboardService implements DashboardServiceInterface
         }
 
         //
+        // Calculate additional statistics
+        $maxAverageTardiness = max(array_column($tardinessData, 'average_tardiness_minutes'));
+        $maxOccurrences = max(array_column($tardinessData, 'total_occurrences'));
+        $averageMinutes = array_sum(array_column($tardinessData, 'average_tardiness_minutes')) / count($tardinessData);
+        $averageOccurrences = array_sum(array_column($tardinessData, 'total_occurrences')) / count($tardinessData);
+
         $results = [
+            'max_average_minutes' => $this->minutesToStr($maxAverageTardiness),
+            'max_occurrences' => $maxOccurrences,
+            'average_minutes' => $this->minutesToStr($averageMinutes),
+            'average_occurrences' => $averageOccurrences,
             'data' => $tardinessData,
-            'max_average' => $maxAverageTardiness
         ];
 
         return $results;
