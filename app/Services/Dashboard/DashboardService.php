@@ -68,7 +68,7 @@ class DashboardService implements DashboardServiceInterface
                     ->unique('id');
 
                 $tardinessData[] = [
-                    'department' => $departmentName,
+                    'department' => $department->acronym,
                     'average_tardiness_minutes' => $averageTardinessTime,
                     'average_tardiness_time' => $this->minutesToStr($averageTardinessTime),
                     'total_occurrences' => $totalLateOccurrences,
