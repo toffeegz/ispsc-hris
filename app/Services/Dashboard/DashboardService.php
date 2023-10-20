@@ -21,11 +21,9 @@ class DashboardService implements DashboardServiceInterface
     public function departmentWiseTardiness(string $frequency, $start_date, $end_date)
     {
         $tardinessData = [];
-        
+
         // Get all employees, including those without a department
-        $employees = Employee::select('id', 'department_id', 'first_name', 'middle_name', 'last_name')
-        ->get();
-        $tardinessData = [];
+        $employees = Employee::select('id', 'department_id', 'first_name', 'middle_name', 'last_name')->get();
 
         // Group employees by department
         $employeesByDepartment = $employees->groupBy('department_id');
@@ -36,34 +34,38 @@ class DashboardService implements DashboardServiceInterface
             $end_date = $betweenDates['end_date'];
         }
 
-        foreach ($employeesByDepartment as $departmentId => $departmentEmployees) 
-        {
-            $attendances = Attendance::whereIn('employee_id', $departmentEmployees->pluck('id')->toArray())
-            ->whereBetween('date', [$start_date, $end_date])
-            ->get();
+        // Loop through all departments
+        foreach (Department::all() as $department) {
+            $departmentId = $department->id;
 
-            // Calculate total tardiness time (in minutes)
-            $totalTardinessTime = $attendances->sum('undertime');
+            // Get employees in the current department
+            $departmentEmployees = $employeesByDepartment->get($departmentId);
 
-            // Calculate the total number of late occurrences
-            $totalLateOccurrences = $attendances->where('undertime', '>', 0)->count();
+            // If there are employees in the department, proceed to calculate tardiness
+            if ($departmentEmployees) {
+                $attendances = Attendance::whereIn('employee_id', $departmentEmployees->pluck('id')->toArray())
+                    ->whereBetween('date', [$start_date, $end_date])
+                    ->get();
 
-            // Calculate the average tardiness time
-            $averageTardinessTime = $totalLateOccurrences > 0 ? $totalTardinessTime / $totalLateOccurrences : 0;
+                // Calculate total tardiness time (in minutes)
+                $totalTardinessTime = $attendances->sum('undertime');
 
-            // If there are late occurrences in the department, add it to the result
-            if ($totalLateOccurrences > 0) 
-            {
-                // Get the department name or set it to "N/A" if the department doesn't exist
-                $departmentName = $departmentId ? Department::find($departmentId)->name : 'N/A';
+                // Calculate the total number of late occurrences
+                $totalLateOccurrences = $attendances->where('undertime', '>', 0)->count();
+
+                // Calculate the average tardiness time
+                $averageTardinessTime = $totalLateOccurrences > 0 ? $totalTardinessTime / $totalLateOccurrences : 0;
+
+                // Get the department name
+                $departmentName = $department->name;
 
                 // List of employees who were late
                 $lateEmployees = $attendances->where('undertime', '>', 0)
-                ->pluck('employee_id')
-                ->map(function ($employeeId) use ($employees) {
-                    return $employees->firstWhere('id', $employeeId);
-                })
-                ->unique('id');
+                    ->pluck('employee_id')
+                    ->map(function ($employeeId) use ($employees) {
+                        return $employees->firstWhere('id', $employeeId);
+                    })
+                    ->unique('id');
 
                 $tardinessData[] = [
                     'department' => $departmentName,
@@ -71,6 +73,15 @@ class DashboardService implements DashboardServiceInterface
                     'average_tardiness_time' => $this->minutesToStr($averageTardinessTime),
                     'total_occurrences' => $totalLateOccurrences,
                     'late_employees' => $lateEmployees,
+                ];
+            } else {
+                // If there are no employees in the department, add it to the result with no late occurrences
+                $tardinessData[] = [
+                    'department' => $department->name,
+                    'average_tardiness_minutes' => 0,
+                    'average_tardiness_time' => '0 mins',
+                    'total_occurrences' => 0,
+                    'late_employees' => [],
                 ];
             }
         }
