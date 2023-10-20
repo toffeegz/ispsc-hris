@@ -86,7 +86,23 @@ class DashboardService implements DashboardServiceInterface
             }
         }
 
-        return $tardinessData;
+        // max average
+        $maxAverageTardiness = 0; // Initialize the maximum value to 0
+
+        foreach ($tardinessData as $departmentData) {
+            $averageTardinessMinutes = $departmentData['average_tardiness_minutes'];
+            if ($averageTardinessMinutes > $maxAverageTardiness) {
+                $maxAverageTardiness = $averageTardinessMinutes; // Update the maximum value
+            }
+        }
+
+        //
+        $results = [
+            'data' => $tardinessData,
+            'max_average' => $maxAverageTardiness
+        ];
+
+        return $results;
     }
 
     public function employeeTardiness()
