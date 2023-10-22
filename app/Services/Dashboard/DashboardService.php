@@ -188,10 +188,53 @@ class DashboardService implements DashboardServiceInterface
         return $tardinessData;
     }
 
-    public function topHabitualLateComers()
+    public function topHabitualLateComers(string $frequency, $start_date, $end_date)
     {
-        
+        // Initialize an array to store the results
+        $tardinessData = [];
+    
+        // Retrieve all employees
+        $employees = Employee::all();
+    
+        // If the frequency is not "specific_date," calculate start and end dates
+        if ($frequency !== "specific_date") {
+            $betweenDates = $this->betweenDates($frequency);
+            $start_date = $betweenDates['start_date'];
+            $end_date = $betweenDates['end_date'];
+        }
+    
+        // Loop through all employees
+        foreach ($employees as $employee) {
+            // Calculate the total tardiness minutes for the employee within the specified time range
+            $totalTardinessMinutes = Attendance::where('employee_id', $employee->id)
+                ->whereBetween('date', [$start_date, $end_date])
+                ->sum('undertime');
+    
+            // If the employee has tardiness minutes greater than 0, add their information to the result array
+            if ($totalTardinessMinutes > 0) {
+                // Get the department name for the employee
+                $departmentName = $employee->department->acronym;
+
+                // Add the employee's information to the result array
+                $tardinessData[] = [
+                    'employee_name' => $employee->full_name_formal,
+                    'department_name' => $departmentName,
+                    'total_tardiness' => $this->minutesToStr($totalTardinessMinutes),
+                    'total_tardiness_minutes' => $totalTardinessMinutes,
+                ];
+            }
+        }
+    
+        // Sort the result array by total tardiness minutes in descending order
+        usort($tardinessData, function ($a, $b) {
+            return $b['total_tardiness_minutes'] - $a['total_tardiness_minutes'];
+        });
+
+        // You now have an array ($tardinessData) with employee names, department names, and total tardiness minutes
+        return array_slice($tardinessData, 0, 10); 
     }
+    
+
 
     public function minutesToStr($minutes)
     {

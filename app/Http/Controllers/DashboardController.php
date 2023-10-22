@@ -42,6 +42,11 @@ class DashboardController extends Controller
 
     public function topHabitualLateComers()
     {
-        
+        $frequency = request()->input('frequency', "monthly");
+        $start_date = request()->input('start_date', null);
+        $end_date = request()->input('end_date', null);
+
+        $results = $this->modelService->topHabitualLateComers($frequency, $start_date, $end_date);
+        return $this->responseService->successResponse($this->name, $results);
     }
 }
