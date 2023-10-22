@@ -114,9 +114,78 @@ class DashboardService implements DashboardServiceInterface
         return $results;
     }
 
-    public function employeeTardiness()
+    public function employeeTardiness($department_ids = [], $month = null, $year = null)
     {
-        
+        $tardinessData = [];
+
+        // Get all employees
+        $employeesQuery = Employee::query();
+
+        if (!empty($department_ids)) {
+            // Filter employees by department IDs if provided
+            $employeesQuery->whereIn('department_id', $department_ids);
+            
+        }
+
+        $employees = $employeesQuery->orderBy('last_name')->get();
+
+        $now = now();
+
+        if (!$month) {
+            $month = $now->month;
+        }
+        if(!$year) {
+            $year = $now->year;
+        }
+
+        // Calculate the start and end dates based on the provided month and year
+        $start_date = now()->year($year)->month($month)->startOfMonth();
+        $end_date = now()->year($year)->month($month)->endOfMonth();
+
+        // Retrieve attendance records for the selected month and year
+        $attendances = Attendance::whereIn('employee_id', $employees->pluck('id')->toArray())
+            ->whereBetween('date', [$start_date, $end_date])
+            ->get();
+
+        // Loop through employees and calculate tardiness for each
+        foreach ($employees as $employee) {
+            $employeeAttendances = $attendances->where('employee_id', $employee->id);
+
+            // Calculate tardiness for each day in the month
+            $tardinessByDay = [];
+            $totalTardinessTime = 0;
+            for ($day = 1; $day <= $end_date->day; $day++) {
+                $attendance = $employeeAttendances
+                    ->where('date', $start_date->day($day)->toDateString())
+                    ->first();
+
+                if ($attendance) {
+                    $undertime = $attendance->undertime;
+                    if ($undertime > 0) {
+                        // Employee was late; record the tardiness in minutes
+                        $tardinessByDay[] = $this->minutesToStr($undertime);
+                        $totalTardinessTime += $undertime;
+                    } else {
+                        // Employee was on time
+                        $tardinessByDay[] = "On-Time";
+                    }
+                } else {
+                    // No attendance record for this day
+                    $tardinessByDay[] = "";
+                }
+            }
+
+
+            $tardinessData[] = [
+                'employee' => $employee->full_name_formal,
+                'tardiness_minutes_by_day' => $tardinessByDay,
+                'total_tardines_time' => $this->minutesToStr($totalTardinessTime),
+                'total_tardines_minutes' => $totalTardinessTime,
+
+            ];
+        }
+
+        return $tardinessData;
     }
 
     public function topHabitualLateComers()

@@ -32,7 +32,12 @@ class DashboardController extends Controller
 
     public function employeeTardiness()
     {
-        
+        $department_ids = request()->input('department_ids', []);
+        $month = request()->input('month', null);
+        $year = request()->input('year', null);
+
+        $results = $this->modelService->employeeTardiness($department_ids, $month, $year);
+        return $this->responseService->successResponse($this->name, $results);
     }
 
     public function topHabitualLateComers()
