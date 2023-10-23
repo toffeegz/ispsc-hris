@@ -15,4 +15,19 @@ return [
         ]
     ],
 
+    'ipcr_categories' => [
+        [
+            'name' => 'Strategic Functions',
+            'weight' => 40 / 100,
+        ],
+        [
+            'name' => 'Core Functions',
+            'weight' => 40 / 100,
+        ],
+        [
+            'name' => 'Support Functions',
+            'weight' => 20 / 100,
+        ]
+    ]
+
 ];

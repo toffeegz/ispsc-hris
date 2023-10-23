@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Employee;
 use App\Models\Schedule;
+use App\Models\Position;
 
 class EmployeeSeeder extends Seeder
 {
@@ -22,12 +23,22 @@ class EmployeeSeeder extends Seeder
 
         $schedule = Schedule::where('is_default', false)->first(); // Get the first non-default schedule
 
+        // Get all available positions
+        $positions = Position::all();
+
         $employees = Employee::factory()->count(15)->create([
             'employee_id' => function () use (&$ids) {
                 return array_shift($ids);
             },
             'schedule_id' => function () use ($schedule) {
                 return rand(0, 4) === 0 ? $schedule->id : null; // 20% chance of having a schedule
+            },
+            'position_id' => function () use ($ids) {
+                return Position::inRandomOrder()->first()->id;
+            },
+            'department_id' => function (array $attributes) {
+                $position = Position::find($attributes['position_id']);
+                return $position->department_id;
             },
         ]);
     }
