@@ -18,6 +18,8 @@ use App\Repositories\Employee\EmployeeRepository;
 use App\Repositories\Employee\EmployeeRepositoryInterface;
 use App\Repositories\EmploymentStatus\EmploymentStatusRepository;
 use App\Repositories\EmploymentStatus\EmploymentStatusRepositoryInterface;
+use App\Repositories\IpcrItem\IpcrItemRepository;
+use App\Repositories\IpcrItem\IpcrItemRepositoryInterface;
 use App\Repositories\Leave\LeaveRepository;
 use App\Repositories\Leave\LeaveRepositoryInterface;
 use App\Repositories\LeaveType\LeaveTypeRepository;
@@ -46,6 +48,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EducationalBackgroundRepositoryInterface::class, EducationalBackgroundRepository::class);
         $this->app->bind(EmployeeRepositoryInterface::class, EmployeeRepository::class);
         $this->app->bind(EmploymentStatusRepositoryInterface::class, EmploymentStatusRepository::class);
+        $this->app->bind(IpcrItemRepositoryInterface::class, IpcrItemRepository::class);
         $this->app->bind(LeaveRepositoryInterface::class, LeaveRepository::class);
         $this->app->bind(LeaveTypeRepositoryInterface::class, LeaveTypeRepository::class);
         $this->app->bind(PositionRepositoryInterface::class, PositionRepository::class);

@@ -32,7 +32,7 @@ class Employee extends Model
         'schedule_id',
     ];
 
-    protected $appends = ['full_name', 'is_flexible'];
+    protected $appends = ['full_name', 'full_name_formal', 'is_flexible'];
 
     public function scopeFilter($query, array $filters)
     {
@@ -65,6 +65,21 @@ class Employee extends Model
         }
 
         $full_name .= ' ' . $this->last_name;
+
+        return $full_name;
+    }
+
+    public function getFullNameFormalAttribute()
+    {
+        // Assuming that 'first_name', 'middle_name', and 'last_name' are columns in your Employee model
+        $full_name = $this->last_name . ", " . $this->first_name;
+
+        // Check if middle name exists
+        if ($this->middle_name) {
+            // Get the first character of the middle name as the initial
+            $middle_initial = substr($this->middle_name, 0, 1);
+            $full_name .= ' ' . $middle_initial . '.';
+        }
 
         return $full_name;
     }

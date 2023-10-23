@@ -13,7 +13,9 @@ class Department extends Model
 
     protected $fillable = [
         'name',
+        'acronym',
         'description',
+        'employee_id',
     ];
 
     public function scopeFilter($query, array $filters)

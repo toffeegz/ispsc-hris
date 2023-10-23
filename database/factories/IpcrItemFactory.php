@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\IpcrCategory>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\IpcrItem>
  */
-class IpcrCategoryFactory extends Factory
+class IpcrItemFactory extends Factory
 {
     /**
      * Define the model's default state.

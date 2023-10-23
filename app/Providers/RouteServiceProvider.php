@@ -43,6 +43,10 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::prefix('api')
                 ->middleware(['api'])
+                ->group(base_path('routes/api/dashboard.php'));
+
+            Route::prefix('api')
+                ->middleware(['api'])
                 ->group(base_path('routes/api/department.php'));
 
             Route::prefix('api')
@@ -52,6 +56,10 @@ class RouteServiceProvider extends ServiceProvider
             Route::prefix('api')
                 ->middleware(['api'])
                 ->group(base_path('routes/api/employment_status.php'));
+
+            Route::prefix('api')
+                ->middleware(['api'])
+                ->group(base_path('routes/api/ipcr_item.php'));
 
             Route::prefix('api')
                 ->middleware(['api'])
