@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\IpcrPeriod;
+use App\Models\IpcrEvaluation;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class IpcrPeriodPolicy
+class IpcrEvaluationPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,7 +19,7 @@ class IpcrPeriodPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, IpcrPeriod $ipcrPeriod): bool
+    public function view(User $user, IpcrEvaluation $ipcrEvaluation): bool
     {
         //
     }
@@ -35,7 +35,7 @@ class IpcrPeriodPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, IpcrPeriod $ipcrPeriod): bool
+    public function update(User $user, IpcrEvaluation $ipcrEvaluation): bool
     {
         //
     }
@@ -43,7 +43,7 @@ class IpcrPeriodPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, IpcrPeriod $ipcrPeriod): bool
+    public function delete(User $user, IpcrEvaluation $ipcrEvaluation): bool
     {
         //
     }
@@ -51,7 +51,7 @@ class IpcrPeriodPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, IpcrPeriod $ipcrPeriod): bool
+    public function restore(User $user, IpcrEvaluation $ipcrEvaluation): bool
     {
         //
     }
@@ -59,7 +59,7 @@ class IpcrPeriodPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, IpcrPeriod $ipcrPeriod): bool
+    public function forceDelete(User $user, IpcrEvaluation $ipcrEvaluation): bool
     {
         //
     }
