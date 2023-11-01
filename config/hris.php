@@ -17,14 +17,17 @@ return [
 
     'ipcr_categories' => [
         [
+            'order' => 1,
             'name' => 'Strategic Functions',
             'weight' => 40 / 100,
         ],
         [
+            'order' => 2,
             'name' => 'Core Functions',
             'weight' => 40 / 100,
         ],
         [
+            'order' => 3,
             'name' => 'Support Functions',
             'weight' => 20 / 100,
         ]

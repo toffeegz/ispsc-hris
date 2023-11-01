@@ -10,6 +10,7 @@ use App\Models\Position;
 use App\Models\EmploymentStatus;
 use App\Models\LeaveType;
 use App\Models\IpcrPeriod;
+use App\Models\IpcrCategory;
 
 class OptionController extends Controller
 {
@@ -69,6 +70,14 @@ class OptionController extends Controller
         });
 
         return $this->responseService->successResponse($this->name, $formattedResults);
+    }
+
+    public function ipcr_categories()
+    {
+        $results = IpcrCategory::select(['id', 'name', 'weight', 'order'])
+            ->orderBy('order') 
+            ->get();
+        return $this->responseService->successResponse($this->name, $results);
     }
 
 }
