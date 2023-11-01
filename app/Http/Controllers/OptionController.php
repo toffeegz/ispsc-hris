@@ -9,6 +9,7 @@ use App\Models\Department;
 use App\Models\Position;
 use App\Models\EmploymentStatus;
 use App\Models\LeaveType;
+use App\Models\IpcrPeriod;
 
 class OptionController extends Controller
 {
@@ -50,4 +51,24 @@ class OptionController extends Controller
         $results = LeaveType::select(['id', 'name'])->get();
         return $this->responseService->successResponse($this->name, $results);
     }
+
+    public function ipcr_periods()
+    {
+        $results = IpcrPeriod::select(['id', 'start_month', 'end_month', 'year'])->get();
+
+        $formattedResults = $results->map(function ($result) {
+            $startMonth = date("M", mktime(0, 0, 0, $result->start_month, 1));
+            $endMonth = date("M", mktime(0, 0, 0, $result->end_month, 1));
+
+            $dateRange = $startMonth . ' to ' . $endMonth . ' ' . $result->year;
+
+            return [
+                'id' => $result->id,
+                'date_range' => $dateRange,
+            ];
+        });
+
+        return $this->responseService->successResponse($this->name, $formattedResults);
+    }
+
 }
