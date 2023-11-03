@@ -20,9 +20,4 @@ class IpcrEvaluationItemRepository extends BaseRepository implements IpcrEvaluat
     {
         parent::__construct($model);
     }
-
-    public function lists(string $ipcr_evaluation_id)
-    {
-        
-    }
 }

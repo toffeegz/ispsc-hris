@@ -80,4 +80,30 @@ class OptionController extends Controller
         return $this->responseService->successResponse($this->name, $results);
     }
 
+    public function ipcr_permanent_item_names()
+    {
+        // Get the condition based on request()->ipcr_subcategory
+        $condition = request()->ipcr_subcategory;
+
+        // Get the ipcr_support_functions array from the config file
+        $ipcrSupportFunctions = config('hris.ipcr_support_functions');
+
+        // Define a variable to store the result
+        $results = [];
+
+        if ($condition === "Prompt Submission of Documents") {
+            // If the condition is "Prompt Submission of Documents," get the 'a' list
+            $results = $ipcrSupportFunctions['a'];
+        } elseif ($condition === "Attendance to:") {
+            // If the condition starts with "Attendance to:", get the 'b' list
+            $results = $ipcrSupportFunctions['b'];
+        } else {
+            // Merge 'a' and 'b' if the condition is empty or null
+            $results = array_merge($ipcrSupportFunctions['a'], $ipcrSupportFunctions['b']);
+        }
+
+        // Return the results
+        return $results;
+    }
+
 }

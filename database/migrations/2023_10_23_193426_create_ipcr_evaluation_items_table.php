@@ -15,7 +15,11 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('evaluation_id');
             $table->uuid('category_id');
-            $table->uuid('item_id');
+            $table->uuid('subcategory_id')->nullable();
+
+            $table->string('name');
+            $table->unsignedSmallInteger('order')->nullable();
+            
             $table->text('major_final_output')->nullable();
             $table->text('performance_indicators')->nullable();
             $table->text('target_of_accomplishment')->nullable();

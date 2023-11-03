@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ipcr_evaluations', function (Blueprint $table) {
+        Schema::create('ipcr_subcategories', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('employee_id');
-            $table->uuid('ipcr_period_id');
-            $table->decimal('overall_rating', 5, 2);
-            $table->uuid('reviewed_by')->nullable();
-            $table->uuid('recommending_approval')->nullable();
+            $table->string('name');
+            $table->decimal('weight', 5, 2)->nullable();
+            $table->uuid('parent_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-        });  
+        });
     }
 
     /**
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ipcr_evaluations');
+        Schema::dropIfExists('ipcr_subcategories');
     }
 };

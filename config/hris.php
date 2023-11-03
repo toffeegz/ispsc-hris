@@ -31,6 +31,59 @@ return [
             'name' => 'Support Functions',
             'weight' => 20 / 100,
         ]
+    ],
+
+    'ipcr_subcategories' => [
+        '2' => [ // ipcr category 2 core functions
+            [
+                'name' => 'Instruction',
+                'weight' => 67.0,
+                'children' => [
+                    ['name' => 'Instructional Materials Development', 'weight' => 33.3333],
+                    ['name' => 'Management of Learning and Classroom Organization for Instruction', 'weight' => 33.3333],
+                    ['name' => 'Assessment/ Evaluation of Students\' Performance', 'weight' => 33.3333],
+                ],
+            ],
+            [
+                'name' => 'Research, Extension, Production',
+                'weight' => 33,
+                'children' => [
+                    ['name' => 'Research Services', 'weight' => 16.5],
+                    ['name' => 'Extension Services', 'weight' => 16.5],
+                    ['name' => 'Production Services', 'weight' => 67],
+                ],
+            ],
+            ['name' => 'Administrative Function (Designation)'],
+        ],
+        '3' => [ // ipcr category 3 support functions
+            [
+                'name' => 'Prompt Submission of Documents',
+                'weight' => 10.0,
+            ],
+            [
+                'name' => 'Attendance to:',
+                'weight' => 10.0,
+            ],
+        ],
+    ],
+
+    'ipcr_support_functions' => [
+        'a' => [
+            'DTR',
+            'ITR',
+            'PDS',
+            'SALN',
+            'Medical records'
+        ],
+        'b' => [
+            'College Initiated Activities',
+            'Civil Service Initiated Activities',
+            'National/Local /Provincial initiated Activities',
+            'Participation to community activities.',
+            'Attendance of Trainings/Conference/ Seminars',
+            'Attendance to Meetings (Faculty, Academic Council, Administrative Council, and RDE Council',
+        ]
     ]
+    
 
 ];
