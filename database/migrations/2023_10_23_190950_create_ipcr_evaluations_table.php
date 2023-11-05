@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('employee_id');
             $table->uuid('ipcr_period_id');
-            $table->decimal('overall_rating', 5, 2);
+            $table->decimal('overall_rating', 5, 2)->nullable();
             $table->uuid('reviewed_by')->nullable();
             $table->uuid('recommending_approval')->nullable();
             $table->timestamps();

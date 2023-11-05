@@ -18,4 +18,9 @@ class IpcrEvaluation extends Model
         'reviewed_by',
         'recommending_approval',
     ];
+
+    public function evaluations()
+    {
+        return $this->hasMany(IpcrEvaluationItem::class, 'evaluation_id');
+    }
 }

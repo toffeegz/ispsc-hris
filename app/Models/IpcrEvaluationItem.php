@@ -12,6 +12,7 @@ class IpcrEvaluationItem extends Model
     use HasFactory, Uuid, SoftDeletes;
 
     protected $fillable = [
+        'name',
         'evaluation_id',
         'category_id',
         'item_id',
