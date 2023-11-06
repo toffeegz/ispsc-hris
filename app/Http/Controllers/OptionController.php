@@ -11,6 +11,8 @@ use App\Models\EmploymentStatus;
 use App\Models\LeaveType;
 use App\Models\IpcrPeriod;
 use App\Models\IpcrCategory;
+use App\Models\IpcrSubcategory;
+use App\Models\Employee;
 
 class OptionController extends Controller
 {
@@ -104,6 +106,25 @@ class OptionController extends Controller
 
         // Return the results
         return $results;
+    }
+
+    public function ipcr_subcategories()
+    {
+        $parent_id = request()->parent_id ?? null;
+        $query = IpcrSubcategory::select(['id', 'name', 'weight', 'parent_id']);
+
+        if ($parent_id !== null) {
+            $query->where('parent_id', $parent_id);
+        }
+
+        $results = $query->get();
+        return $this->responseService->successResponse($this->name, $results);
+    }
+
+    public function employees()
+    {
+        $results = Employee::select(['id', 'first_name', 'middle_name', 'last_name', 'employee_id'])->get();
+        return $this->responseService->successResponse($this->name, $results);
     }
 
 }

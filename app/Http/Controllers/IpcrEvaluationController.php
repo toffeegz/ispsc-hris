@@ -27,7 +27,7 @@ class IpcrEvaluationController extends Controller
 
     public function index()
     {
-        $results = $this->modelRepository->lists(request(['search']));
+        $results = $this->modelRepository->lists(request(['search']), ['employee']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
