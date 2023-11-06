@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('ipcr_evaluations', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('employee_id');
-            $table->uuid('period_id');
-            $table->decimal('overall_rating', 5, 2);
+            $table->uuid('ipcr_period_id');
+            $table->decimal('overall_rating', 5, 2)->nullable();
+            $table->uuid('reviewed_by')->nullable();
+            $table->uuid('recommending_approval')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });  

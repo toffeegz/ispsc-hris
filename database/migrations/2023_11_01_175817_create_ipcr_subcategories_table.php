@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ipcr_items', function (Blueprint $table) {
+        Schema::create('ipcr_subcategories', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('category_id');
             $table->string('name');
-            $table->decimal('weight', 5, 2);
+            $table->decimal('weight', 5, 2)->nullable();
+            $table->uuid('parent_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ipcr_items');
+        Schema::dropIfExists('ipcr_subcategories');
     }
 };
