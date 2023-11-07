@@ -33,4 +33,5 @@ class IpcrSubcategoryRepository extends BaseRepository implements IpcrSubcategor
         return $this->model->filter($search)->orderBy($sortByColumn, $sortBy)->paginate(request('limit') ?? 10);
     }
     //
+    
 }
