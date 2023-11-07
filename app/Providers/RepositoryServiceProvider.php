@@ -22,6 +22,8 @@ use App\Repositories\IpcrEvaluation\IpcrEvaluationRepository;
 use App\Repositories\IpcrEvaluation\IpcrEvaluationRepositoryInterface;
 use App\Repositories\IpcrEvaluationItem\IpcrEvaluationItemRepository;
 use App\Repositories\IpcrEvaluationItem\IpcrEvaluationItemRepositoryInterface;
+use App\Repositories\IpcrSubcategory\IpcrSubcategoryRepository;
+use App\Repositories\IpcrSubcategory\IpcrSubcategoryRepositoryInterface;
 use App\Repositories\Leave\LeaveRepository;
 use App\Repositories\Leave\LeaveRepositoryInterface;
 use App\Repositories\LeaveType\LeaveTypeRepository;
@@ -52,6 +54,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EmploymentStatusRepositoryInterface::class, EmploymentStatusRepository::class);
         $this->app->bind(IpcrEvaluationRepositoryInterface::class, IpcrEvaluationRepository::class);
         $this->app->bind(IpcrEvaluationItemRepositoryInterface::class, IpcrEvaluationItemRepository::class);
+        $this->app->bind(IpcrSubcategoryRepositoryInterface::class, IpcrSubcategoryRepository::class);
         $this->app->bind(LeaveRepositoryInterface::class, LeaveRepository::class);
         $this->app->bind(LeaveTypeRepositoryInterface::class, LeaveTypeRepository::class);
         $this->app->bind(PositionRepositoryInterface::class, PositionRepository::class);

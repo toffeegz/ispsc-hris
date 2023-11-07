@@ -2,65 +2,64 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreIpcrSubcategoryRequest;
-use App\Http\Requests\UpdateIpcrSubcategoryRequest;
+use App\Http\Requests\IpcrSubcategoryRequest as ModelRequest;
 use App\Models\IpcrSubcategory;
+use App\Repositories\IpcrSubcategory\IpcrSubcategoryRepositoryInterface;
+use App\Services\Utils\Response\ResponseServiceInterface;
 
 class IpcrSubcategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private $modelService;
+    private $responseService;
+    private $name = 'IpcrSubcategory';
+    
+    public function __construct(
+        IpcrSubcategoryRepositoryInterface $modelRepository, 
+        ResponseServiceInterface $responseService,
+    ) {
+        $this->modelRepository = $modelRepository;
+        $this->responseService = $responseService;
+    }
+
     public function index()
     {
-        //
+        $results = $this->modelRepository->index(request(['search']), request()->parent_id);
+        return $this->responseService->successResponse($this->name, $results);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function archive()
     {
-        //
+        $results = $this->modelRepository->archives(request(['search']));
+        return $this->responseService->successResponse($this->name, $results);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreIpcrSubcategoryRequest $request)
+    public function store(ModelRequest $request)
     {
-        //
+        $result = $this->modelRepository->create($request->all());
+        return $this->responseService->storeResponse($this->name, $result);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(IpcrSubcategory $ipcrSubcategory)
+    public function show($id)
     {
-        //
+        $result = $this->modelRepository->show($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(IpcrSubcategory $ipcrSubcategory)
+    public function update(ModelRequest $request, $id)
     {
-        //
+        $result = $this->modelRepository->update($request->all(), $id);
+        return $this->responseService->updateResponse($this->name, $result);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateIpcrSubcategoryRequest $request, IpcrSubcategory $ipcrSubcategory)
+    public function delete(string $id)
     {
-        //
+        $result = $this->modelRepository->delete($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(IpcrSubcategory $ipcrSubcategory)
+    public function restore(string $id)
     {
-        //
+        $result = $this->modelRepository->restore($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 }
