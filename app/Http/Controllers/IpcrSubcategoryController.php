@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\IpcrItemRequest as ModelRequest;
-use App\Models\IpcrItem;
-use App\Repositories\IpcrItem\IpcrItemRepositoryInterface;
+use App\Http\Requests\IpcrSubcategoryRequest as ModelRequest;
+use App\Models\IpcrSubcategory;
+use App\Repositories\IpcrSubcategory\IpcrSubcategoryRepositoryInterface;
 use App\Services\Utils\Response\ResponseServiceInterface;
 
-class IpcrItemController extends Controller
+class IpcrSubcategoryController extends Controller
 {
     private $modelService;
     private $responseService;
-    private $name = 'IpcrItem';
+    private $name = 'IpcrSubcategory';
     
     public function __construct(
-        IpcrItemRepositoryInterface $modelRepository, 
+        IpcrSubcategoryRepositoryInterface $modelRepository, 
         ResponseServiceInterface $responseService,
     ) {
         $this->modelRepository = $modelRepository;
@@ -23,7 +23,7 @@ class IpcrItemController extends Controller
 
     public function index()
     {
-        $results = $this->modelRepository->lists(request(['search']));
+        $results = $this->modelRepository->index(request(['search']), request()->parent_id);
         return $this->responseService->successResponse($this->name, $results);
     }
 

@@ -5,62 +5,65 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreIpcrEvaluationRequest;
 use App\Http\Requests\UpdateIpcrEvaluationRequest;
 use App\Models\IpcrEvaluation;
+use App\Repositories\IpcrEvaluation\IpcrEvaluationRepositoryInterface;
+use App\Services\IpcrEvaluation\IpcrEvaluationServiceInterface;
+use App\Services\Utils\Response\ResponseServiceInterface;
 
 class IpcrEvaluationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private $modelService;
+    private $responseService;
+    private $name = 'IpcrEvaluation';
+    
+    public function __construct(
+        IpcrEvaluationRepositoryInterface $modelRepository, 
+        IpcrEvaluationServiceInterface $modelService, 
+        ResponseServiceInterface $responseService,
+    ) {
+        $this->modelRepository = $modelRepository;
+        $this->modelService = $modelService;
+        $this->responseService = $responseService;
+    }
+
     public function index()
     {
-        //
+        $results = $this->modelRepository->lists(request(['search']), ['employee']);
+        return $this->responseService->successResponse($this->name, $results);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function archive()
     {
-        //
+        $results = $this->modelRepository->archives(request(['search']));
+        return $this->responseService->successResponse($this->name, $results);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreIpcrEvaluationRequest $request)
     {
-        //
+        $result = $this->modelService->create($request->all());
+        return $this->responseService->storeResponse($this->name, $result);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(IpcrEvaluation $ipcrEvaluation)
+    public function show($id)
     {
-        //
+        $result = $this->modelRepository->show($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(IpcrEvaluation $ipcrEvaluation)
+    public function update(ModelRequest $request, $id)
     {
-        //
+        $result = $this->modelRepository->update($request->all(), $id);
+        return $this->responseService->updateResponse($this->name, $result);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateIpcrEvaluationRequest $request, IpcrEvaluation $ipcrEvaluation)
+    public function delete(string $id)
     {
-        //
+        $result = $this->modelRepository->delete($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(IpcrEvaluation $ipcrEvaluation)
+    public function restore(string $id)
     {
-        //
+        $result = $this->modelRepository->restore($id);
+        return $this->responseService->successResponse($this->name, $result);
     }
 }

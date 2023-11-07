@@ -8,4 +8,9 @@ Route::prefix('options')->group(function() {
     Route::get('positions', [OptionController::class, 'positions'])->name('option.position');
     Route::get('employment_statuses', [OptionController::class, 'employment_statuses'])->name('option.employment_status');
     Route::get('leave_types', [OptionController::class, 'leave_types'])->name('option.leave_type');
+    Route::get('ipcr_periods', [OptionController::class, 'ipcr_periods'])->name('option.ipcr_period');
+    Route::get('ipcr_categories', [OptionController::class, 'ipcr_categories'])->name('option.ipcr_category');
+    Route::get('ipcr_subcategories', [OptionController::class, 'ipcr_subcategories'])->name('option.ipcr_subcategory');
+    Route::get('ipcr_permanent_item_names', [OptionController::class, 'ipcr_permanent_item_names'])->name('option.ipcr_permanent_item_name');
+    Route::get('employees', [OptionController::class, 'employees'])->name('option.employee');
 });

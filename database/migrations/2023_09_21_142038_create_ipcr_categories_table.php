@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->decimal('weight', 5, 2);
+            $table->unsignedSmallInteger('order')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

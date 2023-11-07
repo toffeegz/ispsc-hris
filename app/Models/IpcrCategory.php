@@ -10,4 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class IpcrCategory extends Model
 {
     use HasFactory, Uuid, SoftDeletes;
+
+    protected $fillable = [
+        'name',
+        'weight',
+        'order',
+    ];
 }

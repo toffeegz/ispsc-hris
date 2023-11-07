@@ -22,5 +22,8 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
         $this->call(LeaveTypeSeeder::class);
         $this->call(LeaveSeeder::class);
+
+        $this->call(IpcrPeriodSeeder::class);
+        $this->call(IpcrCategorySeeder::class);
     }
 }

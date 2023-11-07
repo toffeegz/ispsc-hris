@@ -17,7 +17,7 @@ class IpcrCategorySeeder extends Seeder
         $categories = config('hris.ipcr_categories');
 
         // Insert each category into the database
-        foreach ($categories as $categoryData) {
+        foreach ($categories as $order => $categoryData) {
             IpcrCategory::create($categoryData);
         }
     }
