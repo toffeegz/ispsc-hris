@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Faker\Generator as Faker;
 use App\Models\Employee;
 use Carbon\Carbon;
 use DateInterval;
@@ -27,9 +26,6 @@ class AttendanceFactory extends Factory
         $upperTimeOut = Carbon::createFromTime(20, 0, 0);
 
         $timeOut = $this->faker->dateTimeBetween($lowerTimeOut, $upperTimeOut);
-
-        $carbonTimeIn = Carbon::instance($timeIn);
-        $carbonTimeOut = Carbon::instance($timeOut);
 
         $carbonTimeIn = Carbon::instance($timeIn);
         $carbonTimeOut = Carbon::instance($timeOut);
