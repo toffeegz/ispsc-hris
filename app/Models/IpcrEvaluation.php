@@ -61,6 +61,11 @@ class IpcrEvaluation extends Model
     {
         return $this->belongsTo(Employee::class, 'employee_id');
     }
+    
+    public function ipcrPeriod()
+    {
+        return $this->belongsTo(IpcrPeriod::class, 'ipcr_period_id');
+    }
 
     public function scopeFilter($query, array $filters)
     {

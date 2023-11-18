@@ -55,9 +55,11 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
             $evaluation->final_average_rating = $final_average_rating;
             $evaluation->save();
 
+            $evaluationWithEmployee = IpcrEvaluation::with('employee', 'ipcrPeriod')->find($evaluation->id);
+
             DB::commit();
 
-            return $evaluation;
+            return $evaluationWithEmployee;
         } catch (\Exception $exception) {
             DB::rollBack();
             throw ValidationException::withMessages([$exception->getMessage()]);
