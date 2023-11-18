@@ -15,6 +15,7 @@ class IpcrEvaluationItem extends Model
         'name',
         'evaluation_id',
         'category_id',
+        'subcategory_id',
         'item_id',
         'major_final_output',
         'performance_indicators',

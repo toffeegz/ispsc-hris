@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(IpcrPeriodSeeder::class);
         $this->call(IpcrCategorySeeder::class);
+        $this->call(IpcrSubcategorySeeder::class);
     }
 }
