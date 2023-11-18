@@ -39,9 +39,9 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
             $ctgr_core = IpcrCategory::where('order', 2)->first();
             $ctgr_support = IpcrCategory::where('order', 3)->first();
             
-            $eval_strategic = $this->processEvaluations($ctgr_strategic->id, $attributes['strategic'], $evaluation->id, null);
-            $eval_core = $this->processEvaluations($ctgr_core->id, $attributes['core'], $evaluation->id, null);
-            $eval_support = $this->processEvaluations($ctgr_support->id, $attributes['support'], $evaluation->id, null);
+            $eval_strategic = $this->processEvaluations($ctgr_strategic->id, $attributes['strategic_evaluations'], $evaluation->id, null);
+            $eval_core = $this->processEvaluations($ctgr_core->id, $attributes['core_evaluations'], $evaluation->id, null);
+            $eval_support = $this->processEvaluations($ctgr_support->id, $attributes['support_evaluations'], $evaluation->id, null);
             
             $score_strategic = $this->computeCategoryOverallRating($ctgr_strategic, $evaluation->id);
             $score_core = $this->computeCategoryOverallRating($ctgr_core, $evaluation->id);
