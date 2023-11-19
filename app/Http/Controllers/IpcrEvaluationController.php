@@ -46,7 +46,7 @@ class IpcrEvaluationController extends Controller
 
     public function show($id)
     {
-        $result = $this->modelRepository->show($id, ['evaluations', 'employee']);
+        $result = $this->modelService->show($id);
         return $this->responseService->successResponse($this->name, $result);
     }
 

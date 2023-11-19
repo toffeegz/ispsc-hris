@@ -174,31 +174,6 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
         return $weighted_score;
     }
 
-    ///
-    public function opcr()
-    {
-        $departments = Department::with('headEmployee')->get();
-
-        $result = [];
-
-        foreach ($departments as $department) {
-            $ratingsByPeriod = $department->getTotalAverageRatingByPeriod();
-
-            foreach ($ratingsByPeriod as $rating) {
-                $result[] = [
-                    'name' => $department->headEmployee ? $department->headEmployee->name : 'N/A',
-                    'department' => $department->name,
-                    'final_average_rating' => $rating['final_average_rating'],
-                    'adjectival_rating' => $this->getAdjectivalRating($rating['final_average_rating']), // Assuming a method to get adjectival rating
-                    'ipcr_period' => $rating // IPCR period details
-                    // You might need to adjust IPCR period details based on your relationships
-                ];
-            }
-        }
-
-        return $result;
-    }
-
     private function getAdjectivalRating($numericRating)
     {
         $adjectivalRatings = [
@@ -220,5 +195,66 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
         // Handle cases where the exact rating isn't in the mapping
         // You can adjust this logic based on how you want to handle such cases
         return 'N/A';
+    }
+
+    public function show($id)
+    {
+        $ipcr_evaluation = IpcrEvaluation::with('evaluations.subcategory.parentSubcategory')->find($id);
+
+        $ipcr_evaluation_raw = IpcrEvaluation::find($id);
+        $groupedByCategory = $ipcr_evaluation->evaluations->groupBy('category_id');
+
+        $structuredData = [];
+
+        $structuredData["employee_id"] = $ipcr_evaluation_raw->employee_id;
+        $structuredData["ipcr_period_id"] = $ipcr_evaluation_raw->ipcr_period_id;
+        $structuredData["reviewed_by"] = $ipcr_evaluation_raw->reviewed_by;
+        $structuredData["recommending_approval"] = $ipcr_evaluation_raw->recommending_approval;
+        
+        foreach ($groupedByCategory as $categoryId => $evaluations) {
+
+            // category name
+            $category_name = "support_evaluations";
+            $category_raw = IpcrCategory::find($categoryId);
+            if($category_raw->order === 1) {
+                $category_name = "strategic_evaluations";
+            } elseif($category_raw->order === 2) {
+                $category_name = "core_evaluations";
+            }
+
+            foreach ($evaluations as $evaluation) {
+                $subcategory = $evaluation->subcategory;
+
+                $subcategories = [];
+
+                // Recursive function to handle nested subcategories
+                $this->processSubcategories($subcategory, $subcategories, $categoryId, $id);
+
+                $structuredData[$category_name] = $subcategories;
+
+            }
+        }
+
+        return $structuredData;
+    }
+
+    // Recursive function to process nested subcategories
+    private function processSubcategories($subcategory, &$subcategories, $category_id, $evaluation_id)
+    {
+        $evaluation_items = IpcrEvaluationItem::where('category_id', $category_id)
+        ->where('subcategory_id', $subcategory->id)
+        ->where('evaluation_id', $evaluation_id)
+        ->get()->toArray();
+
+        $subcategoryArray = [
+            'subcategory_id' => $subcategory->id,
+            'evaluations' => $evaluation_items,
+        ];
+
+        if ($subcategory->parentSubcategory) {
+            $this->processSubcategories($subcategory->parentSubcategory, $subcategories, $category_id, $evaluation_id);
+        }
+
+        $subcategories[] = $subcategoryArray;
     }
 }
