@@ -8,6 +8,7 @@ use App\Models\IpcrEvaluation;
 use App\Repositories\IpcrEvaluation\IpcrEvaluationRepositoryInterface;
 use App\Services\IpcrEvaluation\IpcrEvaluationServiceInterface;
 use App\Services\Utils\Response\ResponseServiceInterface;
+use Illuminate\Http\Request;
 
 class IpcrEvaluationController extends Controller
 {
@@ -45,7 +46,7 @@ class IpcrEvaluationController extends Controller
 
     public function show($id)
     {
-        $result = $this->modelRepository->show($id);
+        $result = $this->modelRepository->show($id, ['evaluations', 'employee']);
         return $this->responseService->successResponse($this->name, $result);
     }
 
