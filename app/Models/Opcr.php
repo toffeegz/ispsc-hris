@@ -11,7 +11,7 @@ class Opcr extends Model
 
     protected $table = 'opcr'; 
 
-    protected $appends = ['ipcr_period_name'];
+    protected $appends = ['ipcr_period_name', 'adjectival_rating'];
 
     // Define the relationship to get the department head employee
     public function departmentHeadEmployee()
@@ -57,5 +57,28 @@ class Opcr extends Model
                 });
             });
         });
+    }
+
+    public function getAdjectivalRatingAttribute()
+    {
+        $adjectivalRatings = [
+            5 => 'Outstanding',
+            4 => 'Very Satisfactory',
+            3 => 'Satisfactory',
+            2 => 'Unsatisfactory',
+            1 => 'Poor',
+        ];
+
+        $finalRating = round($this->final_average_rating, 2); // Ensure rating has 2 decimal places
+
+        // Match the final average rating to the adjectival rating
+        foreach ($adjectivalRatings as $rating => $adjective) {
+            if ($finalRating >= $rating) {
+                return $adjective;
+            }
+        }
+
+        // If the rating doesn't fall within the predefined ranges, return a default message
+        return 'Rating not specified';
     }
 }
