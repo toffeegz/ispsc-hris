@@ -59,8 +59,8 @@ class Opcr extends Model
             });
         });
 
-        $query->when($ipcrPeriodId, function (Builder $query) use ($ipcrPeriodId) {
-            $query->where('ipcr_period_id', $ipcrPeriodId);
-        });
+        // $query->when($ipcrPeriodId, function (Builder $query) use ($ipcrPeriodId) {
+        //     $query->where('ipcr_period_id', $ipcrPeriodId);
+        // });
     }
 }
