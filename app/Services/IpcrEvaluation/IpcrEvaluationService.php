@@ -12,6 +12,7 @@ use App\Models\IpcrCategory;
 use App\Models\IpcrSubcategory;
 use App\Models\IpcrEvaluationItem;
 use App\Models\IpcrSubcategoryRating;
+use App\Models\Department;
 
 class IpcrEvaluationService implements IpcrEvaluationServiceInterface
 {
@@ -171,5 +172,53 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
         // Save the updated evaluation instance
         $evaluation->save();
         return $weighted_score;
+    }
+
+    ///
+    public function opcr()
+    {
+        $departments = Department::with('headEmployee')->get();
+
+        $result = [];
+
+        foreach ($departments as $department) {
+            $ratingsByPeriod = $department->getTotalAverageRatingByPeriod();
+
+            foreach ($ratingsByPeriod as $rating) {
+                $result[] = [
+                    'name' => $department->headEmployee ? $department->headEmployee->name : 'N/A',
+                    'department' => $department->name,
+                    'final_average_rating' => $rating['final_average_rating'],
+                    'adjectival_rating' => $this->getAdjectivalRating($rating['final_average_rating']), // Assuming a method to get adjectival rating
+                    'ipcr_period' => $rating // IPCR period details
+                    // You might need to adjust IPCR period details based on your relationships
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    private function getAdjectivalRating($numericRating)
+    {
+        $adjectivalRatings = [
+            5 => 'Outstanding',
+            4 => 'Very Satisfactory',
+            3 => 'Satisfactory',
+            2 => 'Unsatisfactory',
+            1 => 'Poor',
+        ];
+
+        // Get the closest numeric rating from the provided ratings
+        $closestRating = round($numericRating * 2) / 2;
+
+        // If the rounded rating exists in the mapping, return the adjectival rating
+        if (isset($adjectivalRatings[$closestRating])) {
+            return $adjectivalRatings[$closestRating];
+        }
+
+        // Handle cases where the exact rating isn't in the mapping
+        // You can adjust this logic based on how you want to handle such cases
+        return 'N/A';
     }
 }
