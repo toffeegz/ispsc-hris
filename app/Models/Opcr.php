@@ -46,7 +46,6 @@ class Opcr extends Model
     public function scopeFilter($query, array $filters)
     {
         $search = $filters['search'] ?? false;
-        $ipcrPeriodId = $filters['ipcr_period_id'] ?? false;
 
         $query->when($search, function (Builder $query) use ($search) {
             $query->where(function (Builder $query) use ($search) {
@@ -58,9 +57,5 @@ class Opcr extends Model
                 });
             });
         });
-
-        // $query->when($ipcrPeriodId, function (Builder $query) use ($ipcrPeriodId) {
-        //     $query->where('ipcr_period_id', $ipcrPeriodId);
-        // });
     }
 }
