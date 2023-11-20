@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use App\Repositories\User\UserRepositoryInterface;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException; 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
