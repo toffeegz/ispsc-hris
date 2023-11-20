@@ -49,4 +49,26 @@ class DashboardController extends Controller
         $results = $this->modelService->topHabitualLateComers($frequency, $start_date, $end_date);
         return $this->responseService->successResponse($this->name, $results);
     }
+
+    public function opcr()
+    {
+        $ipcr_period_id = request()->input('ipcr_period_id', null);
+        $results = $this->modelService->opcr($ipcr_period_id);
+        return $this->responseService->successResponse($this->name, $results);
+    }
+
+    public function ipcr()
+    {
+        $ipcr_period_id = request()->input('ipcr_period_id', null);
+        $department_id = request()->input('department_id', null);
+        $results = $this->modelService->ipcr($ipcr_period_id, $department_id);
+        return $this->responseService->successResponse($this->name, $results);
+    }
+
+    public function ipcrGraph()
+    {
+        $ipcr_period_id = request()->input('ipcr_period_id', null);
+        $results = $this->modelService->ipcrGraph($ipcr_period_id);
+        return $this->responseService->successResponse($this->name, $results);
+    }
 }

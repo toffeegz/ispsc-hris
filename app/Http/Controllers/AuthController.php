@@ -56,33 +56,42 @@ class AuthController extends Controller
 
     public function handleProviderCallback()
     {
-        $google_user = Socialite::driver('google')->stateless()->user();
-
-        $user = $this->modelRepository->getByEmail($google_user->email);
-        //register 
-        if (!$user) {
-            $attributes = [
-                'name' => $google_user->name,
-                'google_id' => $google_user->id,
-                'email' => $google_user->email,
-                'email_verified_at' => Carbon::now(),
-            ];
-        } else {
-            if($user->google_id === null) {
-                $user->google_id = $google_user->id;
-                if($user->email_verified_at === null) {
-                    $user->email_verified_at = Carbon::now();
+        try {
+            $google_user = Socialite::driver('google')->stateless()->user();
+            
+            $user = $this->modelRepository->getByEmail($google_user->email);
+    
+            if (!$user) {
+                // If user doesn't exist, create a new user
+                $attributes = [
+                    'name' => $google_user->name,
+                    'google_id' => $google_user->id,
+                    'email' => $google_user->email,
+                    'email_verified_at' => Carbon::now(),
+                ];
+                
+                $user = $this->modelRepository->create($attributes); // Assuming 'create' method creates a new user
+                
+                // Create a token for the new user
+                $token = $user->createToken(config('app.name'), ['server:update']);
+            } else {
+                // If the user exists, update Google ID and verify email if necessary
+                if ($user->google_id === null || $user->email_verified_at === null) {
+                    $user->google_id = $google_user->id;
+                    $user->email_verified_at = $user->email_verified_at ?? Carbon::now();
+                    $user->save();
                 }
-                $user->save();
+                
+                // Generate token for the existing user
+                $token = $user->createToken(config('app.name'), ['server:update']);
             }
+    
+            return response()->json(['token' => $token->plainTextToken, 'user' => $user]);
+        } catch (\Exception $e) {
+            // Handle any exceptions that might occur during the process
+            return response()->json(['error' => 'Unable to authenticate.'], 500);
         }
-
-        $token = $user->createToken(config('app.name'), ['server:update']);
-
-        $url = config('selfdriveph.frontend_url') . 'api/login/google/?token=' . $token->plainTextToken . '&user=' . $user;
-        return Redirect::to($url);
     }
-
     public function profile()
     {
         $user = Auth::user();

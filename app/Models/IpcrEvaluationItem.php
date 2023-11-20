@@ -27,4 +27,9 @@ class IpcrEvaluationItem extends Model
         'rating_a',
         'remarks',
     ];
+
+    public function subcategory()
+    {
+        return $this->belongsTo(IpcrSubcategory::class, 'subcategory_id');
+    }
 }
