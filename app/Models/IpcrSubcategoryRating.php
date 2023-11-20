@@ -7,13 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class IpcrItem extends Model
+class IpcrSubcategoryRating extends Model
 {
     use HasFactory, Uuid, SoftDeletes;
 
     protected $fillable = [
-        'category_id',
-        'name',
-        'weight'
+        'ipcr_evaluation_id',
+        'overall_rating',
     ];
 }
