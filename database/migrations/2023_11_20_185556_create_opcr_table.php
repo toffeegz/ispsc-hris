@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('opcr', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('department_id');
-            $table->unsignedBigInteger('department_head')->nullable();
+            $table->uuid('department_id');
+            $table->string('department_head')->nullable();
             $table->string('department_name');
-            $table->unsignedBigInteger('ipcr_period_id');
+            $table->uuid('ipcr_period_id');
             $table->decimal('final_average_rating', 8, 2)->default(0);
             $table->timestamps();
 
