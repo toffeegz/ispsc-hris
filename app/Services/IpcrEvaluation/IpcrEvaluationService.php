@@ -206,10 +206,16 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
 
         $structuredData = [];
 
+        $structuredData["id"] = $ipcr_evaluation_raw->id;
         $structuredData["employee_id"] = $ipcr_evaluation_raw->employee_id;
+        $structuredData["employee_name"] = $ipcr_evaluation_raw->employee->full_name_formal;
         $structuredData["ipcr_period_id"] = $ipcr_evaluation_raw->ipcr_period_id;
+        $structuredData["ipcr_period_date_range"] = $ipcr_evaluation_raw->ipcrPeriod->ipcr_period_date_range;
         $structuredData["reviewed_by"] = $ipcr_evaluation_raw->reviewed_by;
+        $structuredData["reviewed_by_name"] = $ipcr_evaluation_raw->reviewedBy->full_name_formal;
         $structuredData["recommending_approval"] = $ipcr_evaluation_raw->recommending_approval;
+        $structuredData["recommending_approval_name"] = $ipcr_evaluation_raw->recommendingApproval->full_name_formal;
+
         
         foreach ($groupedByCategory as $categoryId => $evaluations) {
 
@@ -248,6 +254,7 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
 
         $subcategoryArray = [
             'subcategory_id' => $subcategory->id,
+            'subcategory_name' => $subcategory->name,
             'evaluations' => $evaluation_items,
         ];
 
