@@ -366,8 +366,9 @@ class DashboardService implements DashboardServiceInterface
         $data = [];
         for ($i = 1; $i <= 5; $i++) {
             $count = $evaluationCounts->firstWhere('rounded_rating', $i);
-            $data[$i] = [
+            $data[] = [
                 'count' => $count ? $count->count : 0,
+                'rate' => $i,
             ];
         }
     
