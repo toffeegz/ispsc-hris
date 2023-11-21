@@ -61,6 +61,16 @@ class IpcrEvaluation extends Model
     {
         return $this->belongsTo(Employee::class, 'employee_id');
     }
+
+    public function recommendingApproval()
+    {
+        return $this->belongsTo(Employee::class, 'recommending_approval');
+    }
+
+    public function reviewedBy()
+    {
+        return $this->belongsTo(Employee::class, 'reviewed_by');
+    }
     
     public function ipcrPeriod()
     {

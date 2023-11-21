@@ -349,10 +349,13 @@ class DashboardService implements DashboardServiceInterface
     public function ipcrGraph($ipcr_period_id)
     {
         if (!$ipcr_period_id) {
-            // Retrieve the latest ipcr_period_id from the relevant source (opcr or ipcr)
-            // Assuming you have a method to get the latest ipcr_period_id
-            $latest_ipcr_period = $this->getLatestIpcrPeriod();
-            $ipcr_period_id = $latest_ipcr_period->id ?? null;
+            $latest_ipcr_period = IpcrPeriod::orderBy('year', 'desc')
+                ->orderBy('start_month', 'desc')
+                ->first();
+
+            if ($latest_ipcr_period) {
+                $ipcr_period_id = $latest_ipcr_period->id;
+            }
         }
     
         $evaluationCounts = IpcrEvaluation::where('ipcr_period_id', $ipcr_period_id)
@@ -366,8 +369,9 @@ class DashboardService implements DashboardServiceInterface
         $data = [];
         for ($i = 1; $i <= 5; $i++) {
             $count = $evaluationCounts->firstWhere('rounded_rating', $i);
-            $data[$i] = [
+            $data[] = [
                 'count' => $count ? $count->count : 0,
+                'rate' => $i,
             ];
         }
     

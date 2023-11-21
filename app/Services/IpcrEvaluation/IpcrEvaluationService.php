@@ -206,10 +206,16 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
 
         $structuredData = [];
 
+        $structuredData["id"] = $ipcr_evaluation_raw->id;
         $structuredData["employee_id"] = $ipcr_evaluation_raw->employee_id;
+        $structuredData["employee_name"] = $ipcr_evaluation_raw->employee->full_name_formal;
         $structuredData["ipcr_period_id"] = $ipcr_evaluation_raw->ipcr_period_id;
+        $structuredData["ipcr_period_date_range"] = $ipcr_evaluation_raw->ipcrPeriod->ipcr_period_date_range;
         $structuredData["reviewed_by"] = $ipcr_evaluation_raw->reviewed_by;
+        $structuredData["reviewed_by_name"] = $ipcr_evaluation_raw->reviewedBy->full_name_formal;
         $structuredData["recommending_approval"] = $ipcr_evaluation_raw->recommending_approval;
+        $structuredData["recommending_approval_name"] = $ipcr_evaluation_raw->recommendingApproval->full_name_formal;
+
         
         foreach ($groupedByCategory as $categoryId => $evaluations) {
 
@@ -222,39 +228,103 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
                 $category_name = "core_evaluations";
             }
 
+            // logger($evaluations);
             foreach ($evaluations as $evaluation) {
                 $subcategory = $evaluation->subcategory;
+                if(!$evaluation->subcategory_id) {
+                    $structuredData[$category_name][] = $evaluation;
+                } else {
+                    $subcategories = [];
 
-                $subcategories = [];
+                    // Recursive function to handle nested subcategories
+                    $subcategories = $this->processSubcategories($subcategory, $categoryId, $id, $subcategories);
 
-                // Recursive function to handle nested subcategories
-                $this->processSubcategories($subcategory, $subcategories, $categoryId, $id);
-
-                $structuredData[$category_name] = $subcategories;
-
+                    $structuredData[$category_name] = $subcategories;
+                }
             }
         }
 
         return $structuredData;
     }
 
-    // Recursive function to process nested subcategories
-    private function processSubcategories($subcategory, &$subcategories, $category_id, $evaluation_id)
+    private function processSubcategories($subcategory, $category_id, $evaluation_id, &$data)
     {
-        $evaluation_items = IpcrEvaluationItem::where('category_id', $category_id)
-        ->where('subcategory_id', $subcategory->id)
-        ->where('evaluation_id', $evaluation_id)
-        ->get()->toArray();
+        if($subcategory->parent_id === null) {
+            $data = [
+                'subcategory_id' => $subcategory->id,
+                'subcategory_name' => $subcategory->name,
+                'evaluations' => [], // Initialize evaluations as an empty array
+            ];
+        
+            // Fetch evaluations for this subcategory
+            $evaluation_items = IpcrEvaluationItem::where('category_id', $category_id)
+                ->where('subcategory_id', $subcategory->id)
+                ->where('evaluation_id', $evaluation_id)
+                ->get()->toArray();
+        
+            // Add fetched evaluations to the subcategoryArray
+            $data['evaluations'] = $evaluation_items;
 
-        $subcategoryArray = [
-            'subcategory_id' => $subcategory->id,
-            'evaluations' => $evaluation_items,
-        ];
+        } else {
+            $parentIndex = null;
 
-        if ($subcategory->parentSubcategory) {
-            $this->processSubcategories($subcategory->parentSubcategory, $subcategories, $category_id, $evaluation_id);
+            // Check if the parent subcategory already exists in $data
+            foreach ($data as $index => $item) {
+                if ($item['subcategory_id'] === $subcategory->parent_id) {
+                    $parentIndex = $index;
+                    break;
+                }
+            }
+
+            // If the parent subcategory doesn't exist, create it
+            if ($parentIndex === null) {
+                $parentData = [
+                    'subcategory_id' => $subcategory->parent_id,
+                    'subcategory_name' => $subcategory->parentSubcategory->name,
+                    'evaluations' => [],
+                ];
+
+                // Recursively call processSubcategories to fill in the evaluations for the parent
+                $parentData = $this->processSubcategories($subcategory->parentSubcategory, $category_id, $evaluation_id, $parentData);
+
+                // Add the parent subcategory to $data
+                $data[] = $parentData;
+                $parentIndex = count($data) - 1;
+            }
+
+            // Check if the child subcategory already exists in the parent subcategory's evaluations
+            $childIndex = null;
+            foreach ($data[$parentIndex]['evaluations'] as $index => $item) {
+                if ($item['subcategory_id'] === $subcategory->id) {
+                    $childIndex = $index;
+                    break;
+                }
+            }
+
+            // If the child subcategory doesn't exist, create it
+            if ($childIndex === null) {
+                $childData = [
+                    'subcategory_id' => $subcategory->id,
+                    'subcategory_name' => $subcategory->name,
+                    'evaluations' => [],
+                ];
+
+                // Fetch evaluations for this subcategory
+                $evaluation_items = IpcrEvaluationItem::where('category_id', $category_id)
+                    ->where('subcategory_id', $subcategory->id)
+                    ->where('evaluation_id', $evaluation_id)
+                    ->get()->toArray();
+
+                // Add fetched evaluations to the childData
+                $childData['evaluations'] = $evaluation_items;
+
+                // Add the child subcategory to the parent subcategory's evaluations
+                $data[$parentIndex]['evaluations'][] = $childData;
+            }
         }
-
-        $subcategories[] = $subcategoryArray;
+        return $data;
+    
     }
+    
+
 }
