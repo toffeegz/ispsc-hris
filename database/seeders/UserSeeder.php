@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
             'email' => 'gezrylclarizg@gmail.com',
             'google_id' => null, // Google ID is set to null
             'role_id' => null, // Role ID is null
-            'email_verified_at' => null, // Email not verified yet
+            'email_verified_at' => now(), // Email not verified yet
             'password' => bcrypt('password'), // Encrypting the password
         ]);
     }
