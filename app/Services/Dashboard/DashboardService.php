@@ -5,9 +5,14 @@ namespace App\Services\Dashboard;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Department;
 use App\Models\Attendance;
 use App\Models\Employee;
+use App\Models\Opcr;
+use App\Models\IpcrPeriod;
+use App\Models\IpcrEvaluation;
 
 class DashboardService implements DashboardServiceInterface
 {
@@ -233,8 +238,6 @@ class DashboardService implements DashboardServiceInterface
         // You now have an array ($tardinessData) with employee names, department names, and total tardiness minutes
         return array_slice($tardinessData, 0, 10); 
     }
-    
-
 
     public function minutesToStr($minutes)
     {
@@ -299,4 +302,83 @@ class DashboardService implements DashboardServiceInterface
             'end_date' => $end_date,
         ];
     }
+
+    public function opcr($ipcr_period_id)
+    {
+        if (!$ipcr_period_id) {
+            $latest_ipcr_period = IpcrPeriod::orderBy('year', 'desc')
+                ->orderBy('start_month', 'desc')
+                ->first();
+    
+            if ($latest_ipcr_period) {
+                $ipcr_period_id = $latest_ipcr_period->id;
+            }
+        }
+
+        $opcr = Opcr::with('departmentHeadEmployee')
+            ->where('ipcr_period_id', $ipcr_period_id)
+            ->get();
+        return $opcr;
+    }
+
+    public function ipcr($ipcr_period_id, $department_id)
+    {
+        if (!$ipcr_period_id) {
+            $latest_ipcr_period = IpcrPeriod::orderBy('year', 'desc')
+                ->orderBy('start_month', 'desc')
+                ->first();
+
+            if ($latest_ipcr_period) {
+                $ipcr_period_id = $latest_ipcr_period->id;
+            }
+        }
+
+        $query = IpcrEvaluation::with('employee', 'employee.department')->where('ipcr_period_id', $ipcr_period_id);
+
+        if ($department_id) {
+            $query->whereHas('employee', function ($query) use ($department_id) {
+                $query->where('department_id', $department_id);
+            });
+        }
+
+        $ipcrEvaluations = $query->get();
+
+        return $ipcrEvaluations;
+    }
+
+    public function ipcrGraph($ipcr_period_id)
+    {
+        if (!$ipcr_period_id) {
+            $latest_ipcr_period = IpcrPeriod::orderBy('year', 'desc')
+                ->orderBy('start_month', 'desc')
+                ->first();
+
+            if ($latest_ipcr_period) {
+                $ipcr_period_id = $latest_ipcr_period->id;
+            }
+        }
+    
+        $evaluationCounts = IpcrEvaluation::where('ipcr_period_id', $ipcr_period_id)
+            ->selectRaw('ROUND(final_average_rating) as rounded_rating, COUNT(*) as count')
+            ->groupBy('rounded_rating')
+            ->get();
+    
+        $maxCount = $evaluationCounts->max('count');
+    
+        // Prepare the data in the desired structure
+        $data = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $count = $evaluationCounts->firstWhere('rounded_rating', $i);
+            $data[] = [
+                'count' => $count ? $count->count : 0,
+                'rate' => $i,
+            ];
+        }
+    
+        return [
+            'max_count' => $maxCount,
+            'data' => $data,
+        ];
+    }
+
 }

@@ -2,6 +2,8 @@
 
 return [
 
+    'frontend_url' => env('FRONTEND_URL', 'localhost:3000/'),
+
     'schedules' => [
         'default' => [
             'in' => '08:00:00',

@@ -32,4 +32,20 @@ class IpcrSubcategory extends Model
         );
     }
 
+    public function parentSubcategory()
+    {
+        return $this->belongsTo(IpcrSubcategory::class, 'parent_id');
+    }
+
+    public function childSubcategories()
+    {
+        return $this->hasMany(IpcrSubcategory::class, 'parent_id');
+    }
+
+    public function evaluations()
+    {
+        return $this->hasMany(IpcrEvaluationItem::class, 'subcategory_id')
+            ->whereNotNull('subcategory_id');
+    }
+
 }

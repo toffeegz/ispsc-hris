@@ -16,9 +16,15 @@ class IpcrEvaluation extends Model
     protected $fillable = [
         'employee_id',
         'ipcr_period_id',
-        'overall_rating',
         'reviewed_by',
         'recommending_approval',
+        'mean_score_strategic',
+        'mean_score_core',
+        'mean_score_support',
+        'weighted_average_strategic',
+        'weighted_average_core',
+        'weighted_average_support',
+        'final_average_rating',
     ];
 
     public function getTotalAverageRatingAttribute()
@@ -39,7 +45,7 @@ class IpcrEvaluation extends Model
         ];
 
         // Get the total average rating
-        $totalAverageRating = $this->getTotalAverageRatingAttribute();
+        $totalAverageRating = $this->final_average_rating;
 
         // Use the mapping to determine the adjectival rating
         return $adjectivalRatings[$totalAverageRating] ?? 'Unknown';
@@ -54,6 +60,21 @@ class IpcrEvaluation extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id');
+    }
+
+    public function recommendingApproval()
+    {
+        return $this->belongsTo(Employee::class, 'recommending_approval');
+    }
+
+    public function reviewedBy()
+    {
+        return $this->belongsTo(Employee::class, 'reviewed_by');
+    }
+    
+    public function ipcrPeriod()
+    {
+        return $this->belongsTo(IpcrPeriod::class, 'ipcr_period_id');
     }
 
     public function scopeFilter($query, array $filters)

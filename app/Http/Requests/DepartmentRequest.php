@@ -33,6 +33,10 @@ class DepartmentRequest extends FormRequest
                 'nullable',
                 'string',
             ],
+            'employee_id' => [
+                'required',
+                'exists:employees,id', // Assuming employee_id needs to exist in the 'employees' table
+            ],
         ];
     }
 }

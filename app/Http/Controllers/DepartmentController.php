@@ -23,13 +23,13 @@ class DepartmentController extends Controller
 
     public function index()
     {
-        $results = $this->modelRepository->lists(request(['search']));
+        $results = $this->modelRepository->lists(request(['search']), ['headEmployee']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
     public function archive()
     {
-        $results = $this->modelRepository->archives(request(['search']));
+        $results = $this->modelRepository->archives(request(['search']), ['headEmployee']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
@@ -41,7 +41,7 @@ class DepartmentController extends Controller
 
     public function show($id)
     {
-        $result = $this->modelRepository->show($id);
+        $result = $this->modelRepository->show($id, ['headEmployee']);
         return $this->responseService->successResponse($this->name, $result);
     }
 
