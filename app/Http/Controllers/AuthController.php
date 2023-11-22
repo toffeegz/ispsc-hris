@@ -15,6 +15,8 @@ use File;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\URL;
 
 use App\Services\Utils\Response\ResponseServiceInterface;
 use App\Services\Auth\AuthServiceInterface;
@@ -56,7 +58,7 @@ class AuthController extends Controller
 
     public function handleProviderCallback()
     {
-        try {
+        // try {
             $google_user = Socialite::driver('google')->stateless()->user();
             
             $user = $this->modelRepository->getByEmail($google_user->email);
@@ -68,11 +70,10 @@ class AuthController extends Controller
                     'google_id' => $google_user->id,
                     'email' => $google_user->email,
                     'email_verified_at' => Carbon::now(),
+                    'password' => bcrypt(Str::random(12))
                 ];
                 
                 $user = $this->modelRepository->create($attributes); // Assuming 'create' method creates a new user
-                
-                // Create a token for the new user
                 $token = $user->createToken(config('app.name'), ['server:update']);
             } else {
                 // If the user exists, update Google ID and verify email if necessary
@@ -84,13 +85,14 @@ class AuthController extends Controller
                 
                 // Generate token for the existing user
                 $token = $user->createToken(config('app.name'), ['server:update']);
+                $result = $this->modelService->login($user->email, '', true, true);
             }
-    
-            return response()->json(['token' => $token->plainTextToken, 'user' => $user]);
-        } catch (\Exception $e) {
-            // Handle any exceptions that might occur during the process
-            return response()->json(['error' => 'Unable to authenticate.'], 500);
-        }
+            $url = URL::to(config('hris.frontend_url') . 'redirect/google?token=' . $token->plainTextToken . '&id=' . $user->id);
+            return Redirect::to($url);
+        // } catch (\Exception $e) {
+        //     // Handle any exceptions that might occur during the process
+        //     return response()->json(['error' => 'Unable to authenticate.'], 500);
+        // }
     }
     public function profile()
     {
