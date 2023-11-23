@@ -58,7 +58,7 @@ class AuthController extends Controller
 
     public function handleProviderCallback()
     {
-        // try {
+        try {
             $google_user = Socialite::driver('google')->stateless()->user();
             
             $user = $this->modelRepository->getByEmail($google_user->email);
@@ -89,10 +89,10 @@ class AuthController extends Controller
             }
             $url = URL::to(config('hris.frontend_url') . 'redirect/google?token=' . $token->plainTextToken . '&id=' . $user->id);
             return Redirect::to($url);
-        // } catch (\Exception $e) {
-        //     // Handle any exceptions that might occur during the process
-        //     return response()->json(['error' => 'Unable to authenticate.'], 500);
-        // }
+        } catch (\Exception $e) {
+            // Handle any exceptions that might occur during the process
+            return $this->responseService->rejectResponse("Unable to authenticate.", null);
+        }
     }
     public function profile()
     {
