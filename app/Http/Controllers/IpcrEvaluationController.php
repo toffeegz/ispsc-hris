@@ -50,9 +50,9 @@ class IpcrEvaluationController extends Controller
         return $this->responseService->successResponse($this->name, $result);
     }
 
-    public function update(ModelRequest $request, $id)
+    public function update(Request $request, $id)
     {
-        $result = $this->modelRepository->update($request->all(), $id);
+        $result = $this->modelService->update($request->all(), $id);
         return $this->responseService->updateResponse($this->name, $result);
     }
 
