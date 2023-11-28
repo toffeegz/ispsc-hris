@@ -112,7 +112,7 @@ class DashboardService implements DashboardServiceInterface
             'max_average_minutes' => $this->minutesToStr($maxAverageTardiness),
             'max_occurrences' => $maxOccurrences,
             'average_minutes' => $this->minutesToStr($averageMinutes),
-            'average_occurrences' => $averageOccurrences,
+            'average_occurrences' => number_format($averageOccurrences, 2),
             'data' => $tardinessData,
         ];
 
