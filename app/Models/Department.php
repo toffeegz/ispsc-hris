@@ -64,4 +64,9 @@ class Department extends Model
         return $this->belongsTo(Employee::class, 'employee_id');
     }
 
+    public function setAcronymAttribute($value)
+    {
+        $this->attributes['acronym'] = strtoupper($value);
+    }
+
 }
