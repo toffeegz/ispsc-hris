@@ -16,6 +16,7 @@ class Department extends Model
         'acronym',
         'description',
         'employee_id',
+        'non_teaching'
     ];
 
     public function scopeFilter($query, array $filters)
