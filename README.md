@@ -12,28 +12,24 @@ Ilocos Sur Polytechnic State College HRIS is a comprehensive Human Resource Info
 - **User Login**: Provide secure access to authorized users.
 - **Dashboard**:
   - **Overview**: Present key HR metrics and data.
-  - **Data Visualization**: Display attendance patterns and habitual tardiness trends.
+  - **Data Visualization**: Display attendance patterns, habitual tardiness trends, IPCR and OPCR Summary.
 - **Employee Management**:
   - **Profiles**: Manage employee information and details.
   - **Training Records**: Track employee training and development.
+  - **Awards/Accomplishments**: Track employee training and development.
 - **Timekeeping**:
   - **Attendance Data Import**: Import attendance data for analysis.
-  - **Leave Records**: Monitor and manage leave requests.
+  - **Leave Records**: Monitor and manage leave.
 - **Performance Management**:
-  - **Performance Review Cycles**: Schedule and manage performance reviews.
-  - **Generate IPCR**: Create Individual Performance Commitment and Review documents.
-  - **Historical Records**: Maintain historical performance data.
-  - **Performance Reports**: Generate performance reports for analysis.
-- **HR Analytics and Reports**:
-  - **Data Analysis**: Analyze attendance data to compute habitual tardiness.
-  - **Report Generation**: Create HR reports.
-  - **Data Visualization**: Visualize HR data for insights.
+  - **IPCR**: Create Individual Performance Commitment.
+  - **OPCR**: View Overall Performance Commitment.
 - **Admin Settings**:
   - **User Management**: Administer user accounts.
-  - **Role Management**: Configure user roles and permissions.
-  - **Audit Logs**: Track system activities.
 - **System Settings**:
-  - **IPCR Evaluation Criteria**: Define evaluation criteria categories and sub-categories.
+  - **Department**: Define departments and its employee head.
+  - **Leave Type**: Define leave types.
+  - **Position**: Define positions.
+  - **Employment Status**: Define employment statuses.
 
 ## Installation
 
@@ -76,18 +72,11 @@ Follow these steps to set up ISPSC HRIS locally:
     
 You can now access the server at http://localhost:8000
 
-## IMPORTANT
-Make sure to run queue jobs and scheduler for system to generate weekly and semimonthly payroll periods, employee payslip.
-
 ## About the Developer
 
 Gezryl Beato Gallego (toffeegz) is a Full Stack Developer based in Philippines. 
 - Laravel
 - Vue.JS
-- ReactJS
-- Typescript
-- Google Apps Script
-- Google API
 - RESTful API
 - Tailwind
 - Livewire
