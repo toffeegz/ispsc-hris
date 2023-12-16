@@ -25,6 +25,7 @@ class IpcrEvaluation extends Model
         'weighted_average_core',
         'weighted_average_support',
         'final_average_rating',
+        'data'
     ];
 
     public function getTotalAverageRatingAttribute()

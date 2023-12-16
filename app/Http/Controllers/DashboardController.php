@@ -26,7 +26,51 @@ class DashboardController extends Controller
         $start_date = request()->input('start_date', null);
         $end_date = request()->input('end_date', null);
 
-        $results = $this->modelService->departmentWiseTardiness($frequency, $start_date, $end_date);
+        // $results = $this->modelService->departmentWiseTardiness($frequency, $start_date, $end_date);
+        $results = array(
+            "max_average_minutes" => 25, // Replace with the actual value if available
+            "max_occurrences" => 20, // Maximum occurrences among departments
+            "average_minutes" => 15, // Replace with the actual value if available
+            "average_occurrences" => 14.6,
+            "data" => array(
+                array(
+                    "department" => "CTE",
+                    "average_tardiness_minutes" => 10,
+                    "average_tardiness_time" => "10 mins",
+                    "total_occurrences" => 12,
+                    "late_employees" => array()
+                ),
+                array(
+                    "department" => "CAS",
+                    "average_tardiness_minutes" => 5,
+                    "average_tardiness_time" => "5 mins",
+                    "total_occurrences" => 8,
+                    "late_employees" => array()
+                ),
+                array(
+                    "department" => "CBE",
+                    "average_tardiness_minutes" => 20,
+                    "average_tardiness_time" => "20 mins",
+                    "total_occurrences" => 15,
+                    "late_employees" => array()
+                ),
+                array(
+                    "department" => "CJE",
+                    "average_tardiness_minutes" => 15,
+                    "average_tardiness_time" => "15 mins",
+                    "total_occurrences" => 18,
+                    "late_employees" => array()
+                ),
+                array(
+                    "department" => "ACAD",
+                    "average_tardiness_minutes" => 25,
+                    "average_tardiness_time" => "25 mins",
+                    "total_occurrences" => 20,
+                    "late_employees" => array()
+                )
+            )
+        );
+        
         return $this->responseService->successResponse($this->name, $results);
     }
 

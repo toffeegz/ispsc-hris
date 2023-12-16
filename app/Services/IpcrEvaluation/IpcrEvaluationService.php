@@ -34,6 +34,7 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
                 'ipcr_period_id' => $attributes['ipcr_period_id'],
                 'reviewed_by' => $attributes['reviewed_by'],
                 'recommending_approval' => $attributes['recommending_approval'],
+                'data' => json_encode($attributes),
             ]);
 
             $ctgr_strategic = IpcrCategory::where('order', 1)->first();
@@ -199,132 +200,22 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
 
     public function show($id)
     {
-        $ipcr_evaluation = IpcrEvaluation::with('evaluations.subcategory.parentSubcategory')->find($id);
-
-        $ipcr_evaluation_raw = IpcrEvaluation::find($id);
-        $groupedByCategory = $ipcr_evaluation->evaluations->groupBy('category_id');
-
-        $structuredData = [];
-
-        $structuredData["id"] = $ipcr_evaluation_raw->id;
-        $structuredData["employee_id"] = $ipcr_evaluation_raw->employee_id;
-        $structuredData["employee_name"] = $ipcr_evaluation_raw->employee->full_name_formal;
-        $structuredData["ipcr_period_id"] = $ipcr_evaluation_raw->ipcr_period_id;
-        $structuredData["ipcr_period_date_range"] = $ipcr_evaluation_raw->ipcrPeriod->ipcr_period_date_range;
-        $structuredData["reviewed_by"] = $ipcr_evaluation_raw->reviewed_by;
-        $structuredData["reviewed_by_name"] = $ipcr_evaluation_raw->reviewedBy->full_name_formal;
-        $structuredData["recommending_approval"] = $ipcr_evaluation_raw->recommending_approval;
-        $structuredData["recommending_approval_name"] = $ipcr_evaluation_raw->recommendingApproval->full_name_formal;
-
-        
-        foreach ($groupedByCategory as $categoryId => $evaluations) {
-
-            // category name
-            $category_name = "support_evaluations";
-            $category_raw = IpcrCategory::find($categoryId);
-            if($category_raw->order === 1) {
-                $category_name = "strategic_evaluations";
-            } elseif($category_raw->order === 2) {
-                $category_name = "core_evaluations";
-            }
-
-            // logger($evaluations);
-            foreach ($evaluations as $evaluation) {
-                $subcategory = $evaluation->subcategory;
-                if(!$evaluation->subcategory_id) {
-                    $structuredData[$category_name][] = $evaluation;
-                } else {
-                    $subcategories = [];
-
-                    // Recursive function to handle nested subcategories
-                    $subcategories = $this->processSubcategories($subcategory, $categoryId, $id, $subcategories);
-
-                    $structuredData[$category_name] = $subcategories;
-                }
-            }
-        }
-
-        return $structuredData;
+        $data = IpcrEvaluation::find($id);
+        return json_decode($data->data);
     }
 
-    private function processSubcategories($subcategory, $category_id, $evaluation_id, &$data)
+    public function update($attributes, $id)
     {
-        if($subcategory->parent_id === null) {
-            $data = [
-                'subcategory_id' => $subcategory->id,
-                'subcategory_name' => $subcategory->name,
-                'evaluations' => [], // Initialize evaluations as an empty array
-            ];
-        
-            // Fetch evaluations for this subcategory
-            $evaluation_items = IpcrEvaluationItem::where('category_id', $category_id)
-                ->where('subcategory_id', $subcategory->id)
-                ->where('evaluation_id', $evaluation_id)
-                ->get()->toArray();
-        
-            // Add fetched evaluations to the subcategoryArray
-            $data['evaluations'] = $evaluation_items;
-
-        } else {
-            $parentIndex = null;
-
-            // Check if the parent subcategory already exists in $data
-            foreach ($data as $index => $item) {
-                if ($item['subcategory_id'] === $subcategory->parent_id) {
-                    $parentIndex = $index;
-                    break;
-                }
-            }
-
-            // If the parent subcategory doesn't exist, create it
-            if ($parentIndex === null) {
-                $parentData = [
-                    'subcategory_id' => $subcategory->parent_id,
-                    'subcategory_name' => $subcategory->parentSubcategory->name,
-                    'evaluations' => [],
-                ];
-
-                // Recursively call processSubcategories to fill in the evaluations for the parent
-                $parentData = $this->processSubcategories($subcategory->parentSubcategory, $category_id, $evaluation_id, $parentData);
-
-                // Add the parent subcategory to $data
-                $data[] = $parentData;
-                $parentIndex = count($data) - 1;
-            }
-
-            // Check if the child subcategory already exists in the parent subcategory's evaluations
-            $childIndex = null;
-            foreach ($data[$parentIndex]['evaluations'] as $index => $item) {
-                if ($item['subcategory_id'] === $subcategory->id) {
-                    $childIndex = $index;
-                    break;
-                }
-            }
-
-            // If the child subcategory doesn't exist, create it
-            if ($childIndex === null) {
-                $childData = [
-                    'subcategory_id' => $subcategory->id,
-                    'subcategory_name' => $subcategory->name,
-                    'evaluations' => [],
-                ];
-
-                // Fetch evaluations for this subcategory
-                $evaluation_items = IpcrEvaluationItem::where('category_id', $category_id)
-                    ->where('subcategory_id', $subcategory->id)
-                    ->where('evaluation_id', $evaluation_id)
-                    ->get()->toArray();
-
-                // Add fetched evaluations to the childData
-                $childData['evaluations'] = $evaluation_items;
-
-                // Add the child subcategory to the parent subcategory's evaluations
-                $data[$parentIndex]['evaluations'][] = $childData;
-            }
-        }
-        return $data;
+        // Delete existing records related to $id
+        IpcrEvaluation::find($id)->delete();
+        IpcrEvaluationItem::where('evaluation_id', $id)->delete();
+        IpcrSubcategoryRating::where('ipcr_evaluation_id', $id)->delete();
     
+        // Create a new record
+        $new_data = $this->create($attributes);
+    
+        // Return whatever response or data is appropriate for your application
+        return $new_data;
     }
-    
 
 }
