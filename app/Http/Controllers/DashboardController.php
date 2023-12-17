@@ -115,4 +115,10 @@ class DashboardController extends Controller
         $results = $this->modelService->ipcrGraph($ipcr_period_id);
         return $this->responseService->successResponse($this->name, $results);
     }
+
+    public function employees()
+    {
+        $results = $this->modelService->employeesGender();
+        return $this->responseService->successResponse($this->name, $results);
+    }
 }

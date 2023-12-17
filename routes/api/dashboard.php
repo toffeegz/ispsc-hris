@@ -9,5 +9,6 @@ Route::get('/top-habitual-latecomers', [DashboardController::class, 'topHabitual
 Route::get('/opcr-summary', [DashboardController::class, 'opcr'])->name('dashboard.opcr');
 Route::get('/ipcr-summary', [DashboardController::class, 'ipcr'])->name('dashboard.ipcr');
 Route::get('/ipcr-graph', [DashboardController::class, 'ipcrGraph'])->name('dashboard.ipcrGraph');
+Route::get('/dashboard/employees', [DashboardController::class, 'employees'])->name('dashboard.employees');
 
 ?>
