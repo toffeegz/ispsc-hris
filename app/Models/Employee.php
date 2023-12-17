@@ -29,6 +29,7 @@ class Employee extends Model
         'user_id',
         'department_id',
         'position_id',
+        'employment_status_id',
         'schedule_id',
     ];
 
@@ -105,6 +106,11 @@ class Employee extends Model
     public function position()
     {
         return $this->belongsTo(Position::class, 'position_id');
+    }
+
+    public function employment_status()
+    {
+        return $this->belongsTo(EmploymentStatus::class, 'employment_status_id');
     }
 
     public function trainings()
