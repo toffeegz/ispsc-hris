@@ -10,6 +10,8 @@ use App\Repositories\Base\BaseRepositoryInterface;
 //
 use App\Repositories\Attendance\AttendanceRepository;
 use App\Repositories\Attendance\AttendanceRepositoryInterface;
+use App\Repositories\Award\AwardRepository;
+use App\Repositories\Award\AwardRepositoryInterface;
 use App\Repositories\Department\DepartmentRepository;
 use App\Repositories\Department\DepartmentRepositoryInterface;
 use App\Repositories\EducationalBackground\EducationalBackgroundRepository;
@@ -26,6 +28,8 @@ use App\Repositories\IpcrSubcategory\IpcrSubcategoryRepository;
 use App\Repositories\IpcrSubcategory\IpcrSubcategoryRepositoryInterface;
 use App\Repositories\Leave\LeaveRepository;
 use App\Repositories\Leave\LeaveRepositoryInterface;
+use App\Repositories\LeaveBalance\LeaveBalanceRepository;
+use App\Repositories\LeaveBalance\LeaveBalanceRepositoryInterface;
 use App\Repositories\LeaveType\LeaveTypeRepository;
 use App\Repositories\LeaveType\LeaveTypeRepositoryInterface;
 use App\Repositories\Opcr\OpcrRepository;
@@ -50,6 +54,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(BaseRepositoryInterface::class, BaseRepository::class);
         // 
         $this->app->bind(AttendanceRepositoryInterface::class, AttendanceRepository::class);
+        $this->app->bind(AwardRepositoryInterface::class, AwardRepository::class);
         $this->app->bind(DepartmentRepositoryInterface::class, DepartmentRepository::class);
         $this->app->bind(EducationalBackgroundRepositoryInterface::class, EducationalBackgroundRepository::class);
         $this->app->bind(EmployeeRepositoryInterface::class, EmployeeRepository::class);
@@ -58,13 +63,13 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IpcrEvaluationItemRepositoryInterface::class, IpcrEvaluationItemRepository::class);
         $this->app->bind(IpcrSubcategoryRepositoryInterface::class, IpcrSubcategoryRepository::class);
         $this->app->bind(LeaveRepositoryInterface::class, LeaveRepository::class);
+        $this->app->bind(LeaveBalanceRepositoryInterface::class, LeaveBalanceRepository::class);
         $this->app->bind(LeaveTypeRepositoryInterface::class, LeaveTypeRepository::class);
         $this->app->bind(OpcrRepositoryInterface::class, OpcrRepository::class);
         $this->app->bind(PositionRepositoryInterface::class, PositionRepository::class);
         $this->app->bind(TrainingRepositoryInterface::class, TrainingRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(VerificationRepositoryInterface::class, VerificationRepository::class);
-
     }
 
     /**

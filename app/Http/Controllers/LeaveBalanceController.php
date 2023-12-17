@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LeaveRequest as ModelRequest;
-use App\Models\Leave;
-use App\Repositories\Leave\LeaveRepositoryInterface;
+use App\Http\Requests\LeaveBalanceRequest as ModelRequest;
+use App\Models\LeaveBalance;
+use App\Repositories\LeaveBalance\LeaveBalanceRepositoryInterface;
 use App\Services\Utils\Response\ResponseServiceInterface;
 
-class LeaveController extends Controller
+class LeaveBalanceController extends Controller
 {
     private $modelService;
     private $responseService;
-    private $name = 'Leave';
+    private $name = 'LeaveBalance';
     
     public function __construct(
-        LeaveRepositoryInterface $modelRepository, 
+        LeaveBalanceRepositoryInterface $modelRepository, 
         ResponseServiceInterface $responseService,
     ) {
         $this->modelRepository = $modelRepository;
@@ -23,43 +23,25 @@ class LeaveController extends Controller
 
     public function index()
     {
-        $search = request()->input('search', null);
-        $status = request()->input('status', null);
-        $formattedSearchArray = [];
-        if ($search !== null) {
-            $formattedSearchArray['search'] = $search;
-        }
-        if ($status !== null) {
-            $formattedSearchArray['status'] = $status;
-        }
-        $results = $this->modelRepository->lists($formattedSearchArray, ['employee', 'leave_type']);
+        $results = $this->modelRepository->lists(request(['search']), ['employee', 'employee.department']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
     public function archive()
     {
-        $search = request()->input('search', null);
-        $status = request()->input('status', null);
-        $formattedSearchArray = [];
-        if ($search !== null) {
-            $formattedSearchArray['search'] = $search;
-        }
-        if ($status !== null) {
-            $formattedSearchArray['status'] = $status;
-        }
-        $results = $this->modelRepository->archives($formattedSearchArray, ['employee', 'leave_type']);
+        $results = $this->modelRepository->archives(request(['search']));
         return $this->responseService->successResponse($this->name, $results);
     }
 
     public function store(ModelRequest $request)
     {
-        $result = $this->modelRepository->store($request->all());
+        $result = $this->modelRepository->create($request->all());
         return $this->responseService->storeResponse($this->name, $result);
     }
 
     public function show($id)
     {
-        $result = $this->modelRepository->show($id, ['employee', 'leave_type']);
+        $result = $this->modelRepository->show($id);
         return $this->responseService->successResponse($this->name, $result);
     }
 

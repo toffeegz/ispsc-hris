@@ -16,6 +16,7 @@ class Department extends Model
         'acronym',
         'description',
         'employee_id',
+        'non_teaching'
     ];
 
     public function scopeFilter($query, array $filters)
@@ -62,6 +63,11 @@ class Department extends Model
     public function headEmployee()
     {
         return $this->belongsTo(Employee::class, 'employee_id');
+    }
+
+    public function setAcronymAttribute($value)
+    {
+        $this->attributes['acronym'] = strtoupper($value);
     }
 
 }

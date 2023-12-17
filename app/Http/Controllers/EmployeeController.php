@@ -26,13 +26,13 @@ class EmployeeController extends Controller
 
     public function index()
     {
-        $results = $this->modelRepository->lists(request(['search']), ['department', 'position', 'trainings', 'educational_backgrounds']);
+        $results = $this->modelRepository->lists(request(['search']), ['department', 'position', 'employment_status', 'trainings', 'educational_backgrounds']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
     public function archive()
     {
-        $results = $this->modelRepository->archives(request(['search']), ['department', 'position', 'trainings', 'educational_backgrounds']);
+        $results = $this->modelRepository->archives(request(['search']), ['department', 'position', 'employment_status', 'trainings', 'educational_backgrounds']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
