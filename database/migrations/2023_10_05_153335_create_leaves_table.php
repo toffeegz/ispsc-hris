@@ -20,7 +20,9 @@ return new class extends Migration
             $table->string('time_start');
             $table->string('time_end');
             $table->uuid('leave_type_id');
-            $table->string('status')->comment('approved, rejected, pending')->default('pending');
+            $table->tinyInteger('status')->comment('0 - on time, 1 - late filing')->default(0);
+            $table->string('remarks')->nullable();
+            $table->decimal('credit', 8, 2)->default(0.00);
             $table->text('details_of_leave');
             $table->text('disapproved_for')->nullable();
             $table->string('approved_for')->nullable();
