@@ -381,4 +381,26 @@ class DashboardService implements DashboardServiceInterface
         ];
     }
 
+    public function employeesGender()
+    {
+        $maleCount = Employee::where('sex', 'male')->count();
+        $femaleCount = Employee::where('sex', 'female')->count();
+
+        // Fetching colors from config
+        $colorsConfig = config('hris.dashboard_colors.employees');
+        
+        return [
+            [
+                'label' => 'Male',
+                'count' => $maleCount,
+                'backgroundColor' => $colorsConfig['male'],
+            ],
+            [
+                'label' => 'Female',
+                'count' => $femaleCount,
+                'backgroundColor' => $colorsConfig['female'],
+            ],
+        ];
+    }
+
 }
