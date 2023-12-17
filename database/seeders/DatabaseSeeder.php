@@ -27,5 +27,6 @@ class DatabaseSeeder extends Seeder
         $this->call(IpcrCategorySeeder::class);
         $this->call(IpcrSubcategorySeeder::class);
         $this->call(DepartmentHeadSeeder::class);
+        $this->call(AwardSeeder::class);
     }
 }
