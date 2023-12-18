@@ -11,11 +11,15 @@ class LeaveType extends Model
 {
     use HasFactory, Uuid, SoftDeletes;
 
+    public const SL_ID = "0baec48c-7589-481b-bad5-65ce778e6f2c";
+    public const VL_ID = "0db020f7-9fcf-420c-b3d4-3c87f0c27f68";
+
     protected $fillable = [
         'name',
         'description',
         'is_deletable',
         'date_period',
+        'acronym',
     ];
 
     public function scopeFilter($query, array $filters)

@@ -112,7 +112,7 @@ class DashboardService implements DashboardServiceInterface
             'max_average_minutes' => $this->minutesToStr($maxAverageTardiness),
             'max_occurrences' => $maxOccurrences,
             'average_minutes' => $this->minutesToStr($averageMinutes),
-            'average_occurrences' => $averageOccurrences,
+            'average_occurrences' => number_format($averageOccurrences, 2),
             'data' => $tardinessData,
         ];
 
@@ -349,10 +349,13 @@ class DashboardService implements DashboardServiceInterface
     public function ipcrGraph($ipcr_period_id)
     {
         if (!$ipcr_period_id) {
-            // Retrieve the latest ipcr_period_id from the relevant source (opcr or ipcr)
-            // Assuming you have a method to get the latest ipcr_period_id
-            $latest_ipcr_period = $this->getLatestIpcrPeriod();
-            $ipcr_period_id = $latest_ipcr_period->id ?? null;
+            $latest_ipcr_period = IpcrPeriod::orderBy('year', 'desc')
+                ->orderBy('start_month', 'desc')
+                ->first();
+
+            if ($latest_ipcr_period) {
+                $ipcr_period_id = $latest_ipcr_period->id;
+            }
         }
     
         $evaluationCounts = IpcrEvaluation::where('ipcr_period_id', $ipcr_period_id)
@@ -366,14 +369,37 @@ class DashboardService implements DashboardServiceInterface
         $data = [];
         for ($i = 1; $i <= 5; $i++) {
             $count = $evaluationCounts->firstWhere('rounded_rating', $i);
-            $data[$i] = [
+            $data[] = [
                 'count' => $count ? $count->count : 0,
+                'rate' => $i,
             ];
         }
     
         return [
             'max_count' => $maxCount,
             'data' => $data,
+        ];
+    }
+
+    public function employeesGender()
+    {
+        $maleCount = Employee::where('sex', 'male')->count();
+        $femaleCount = Employee::where('sex', 'female')->count();
+
+        // Fetching colors from config
+        $colorsConfig = config('hris.dashboard_colors.employees');
+        
+        return [
+            [
+                'label' => 'Male',
+                'count' => $maleCount,
+                'backgroundColor' => $colorsConfig['male'],
+            ],
+            [
+                'label' => 'Female',
+                'count' => $femaleCount,
+                'backgroundColor' => $colorsConfig['female'],
+            ],
         ];
     }
 

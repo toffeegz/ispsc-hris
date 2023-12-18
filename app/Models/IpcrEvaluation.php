@@ -25,6 +25,7 @@ class IpcrEvaluation extends Model
         'weighted_average_core',
         'weighted_average_support',
         'final_average_rating',
+        'data'
     ];
 
     public function getTotalAverageRatingAttribute()
@@ -60,6 +61,16 @@ class IpcrEvaluation extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id');
+    }
+
+    public function recommendingApproval()
+    {
+        return $this->belongsTo(Employee::class, 'recommending_approval');
+    }
+
+    public function reviewedBy()
+    {
+        return $this->belongsTo(Employee::class, 'reviewed_by');
     }
     
     public function ipcrPeriod()

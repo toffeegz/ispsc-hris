@@ -2,7 +2,14 @@
 
 return [
 
-    'frontend_url' => env('FRONTEND_URL', 'localhost:3000/'),
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000/'),
+
+    'dashboard_colors' => [
+        'employees' => [
+            'male' => '#3b8ad9',
+            'female' => '#e24b26',
+        ],
+    ],
 
     'schedules' => [
         'default' => [

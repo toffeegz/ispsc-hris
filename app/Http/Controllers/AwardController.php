@@ -2,33 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreIpcrEvaluationRequest;
-use App\Http\Requests\UpdateIpcrEvaluationRequest;
-use App\Models\IpcrEvaluation;
-use App\Repositories\IpcrEvaluation\IpcrEvaluationRepositoryInterface;
-use App\Services\IpcrEvaluation\IpcrEvaluationServiceInterface;
+use App\Http\Requests\AwardRequest as ModelRequest;
+use App\Models\Award;
+use App\Repositories\Award\AwardRepositoryInterface;
 use App\Services\Utils\Response\ResponseServiceInterface;
-use Illuminate\Http\Request;
 
-class IpcrEvaluationController extends Controller
+class AwardController extends Controller
 {
     private $modelService;
     private $responseService;
-    private $name = 'IpcrEvaluation';
+    private $name = 'Award';
     
     public function __construct(
-        IpcrEvaluationRepositoryInterface $modelRepository, 
-        IpcrEvaluationServiceInterface $modelService, 
+        AwardRepositoryInterface $modelRepository, 
         ResponseServiceInterface $responseService,
     ) {
         $this->modelRepository = $modelRepository;
-        $this->modelService = $modelService;
         $this->responseService = $responseService;
     }
 
-    public function index()
+    public function overview()
     {
-        $results = $this->modelRepository->lists(request(['search']), ['employee']);
+        $results = $this->modelRepository->overview(request(['search']));
+        return $this->responseService->successResponse($this->name, $results);
+    }
+
+    public function details()
+    {
+        $results = $this->modelRepository->lists(request(['search']), ['employee', 'employee.department']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
@@ -38,21 +39,21 @@ class IpcrEvaluationController extends Controller
         return $this->responseService->successResponse($this->name, $results);
     }
 
-    public function store(StoreIpcrEvaluationRequest $request)
+    public function store(ModelRequest $request)
     {
-        $result = $this->modelService->create($request->all());
+        $result = $this->modelRepository->create($request->all());
         return $this->responseService->storeResponse($this->name, $result);
     }
 
     public function show($id)
     {
-        $result = $this->modelService->show($id);
+        $result = $this->modelRepository->show($id);
         return $this->responseService->successResponse($this->name, $result);
     }
 
-    public function update(Request $request, $id)
+    public function update(ModelRequest $request, $id)
     {
-        $result = $this->modelService->update($request->all(), $id);
+        $result = $this->modelRepository->update($request->all(), $id);
         return $this->responseService->updateResponse($this->name, $result);
     }
 
