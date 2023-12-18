@@ -28,7 +28,7 @@ class Leave extends Model
         'approved_for_type',
         'commutation',
     ];
-    protected $appends = ['status', 'type'];
+    protected $appends = ['type'];
 
     public function scopeFilter($query, array $filters)
     {
@@ -67,16 +67,16 @@ class Leave extends Model
         return $this->belongsTo(LeaveType::class, 'leave_type_id');
     }
 
-    public function getStatusAttribute()
-    {
-        if ($this->attributes['status'] === 0) {
-            return 'On-time';
-        } elseif ($this->attributes['status'] === 1) {
-            return 'Late Filing';
-        } else {
-            return 'Unknown'; // If the status doesn't match expected values
-        }
-    }
+    // public function getStatusAttribute()
+    // {
+    //     if ($this->attributes['status'] === 0) {
+    //         return 'On-time';
+    //     } elseif ($this->attributes['status'] === 1) {
+    //         return 'Late Filing';
+    //     } else {
+    //         return 'Unknown'; // If the status doesn't match expected values
+    //     }
+    // }
 
     public function getTypeAttribute()
     {
