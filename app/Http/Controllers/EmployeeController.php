@@ -50,7 +50,7 @@ class EmployeeController extends Controller
 
     public function show($id)
     {
-        $result = $this->modelRepository->show($id, ['department', 'position', 'trainings', 'educational_backgrounds']);
+        $result = $this->modelRepository->show($id, ['department', 'position', 'trainings', 'educational_backgrounds', 'employment_status']);
         return $this->responseService->successResponse($this->name, $result);
     }
 
