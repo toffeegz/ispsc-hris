@@ -33,7 +33,7 @@ class Employee extends Model
         'schedule_id',
     ];
 
-    protected $appends = ['full_name', 'full_name_formal', 'is_flexible'];
+    protected $appends = ['full_name', 'full_name_formal', 'is_flexible', 'employment_status_name'];
 
     public function scopeFilter($query, array $filters)
     {
@@ -137,6 +137,15 @@ class Employee extends Model
         });
     }
 
+    public function getEmploymentStatusNameAttribute()
+    {
+        $employmentStatus = $this->employment_status()->first();
 
+        if ($employmentStatus) {
+            return $employmentStatus->name;
+        }
+
+        return null; 
+    }
 
 }
