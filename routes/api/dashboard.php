@@ -10,5 +10,7 @@ Route::get('/opcr-summary', [DashboardController::class, 'opcr'])->name('dashboa
 Route::get('/ipcr-summary', [DashboardController::class, 'ipcr'])->name('dashboard.ipcr');
 Route::get('/ipcr-graph', [DashboardController::class, 'ipcrGraph'])->name('dashboard.ipcrGraph');
 Route::get('/dashboard/employees', [DashboardController::class, 'employees'])->name('dashboard.employees');
+Route::get('/dashboard/trainings', [DashboardController::class, 'trainings'])->name('dashboard.trainings');
+Route::get('/dashboard/awards', [DashboardController::class, 'awards'])->name('dashboard.awards');
 
 ?>

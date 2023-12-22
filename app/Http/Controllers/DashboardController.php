@@ -121,4 +121,10 @@ class DashboardController extends Controller
         $results = $this->modelService->employeesGender();
         return $this->responseService->successResponse($this->name, $results);
     }
+
+    public function trainings()
+    {
+        $results = $this->modelService->trainings();
+        return $this->responseService->successResponse($this->name, $results);
+    }
 }

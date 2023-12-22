@@ -13,6 +13,7 @@ use App\Models\Employee;
 use App\Models\Opcr;
 use App\Models\IpcrPeriod;
 use App\Models\IpcrEvaluation;
+use App\Models\Training;
 
 class DashboardService implements DashboardServiceInterface
 {
@@ -402,5 +403,76 @@ class DashboardService implements DashboardServiceInterface
             ],
         ];
     }
+
+    public function trainings() 
+    {
+        $currentYear = date('Y');
+        $fiveYearsAgo = $currentYear - 5;
+        $trainings = Training::whereYear('created_at', '>=', $fiveYearsAgo)
+            ->whereYear('created_at', '<=', $currentYear)
+            ->get();
+    
+        $departments = Department::all();
+    
+        $departmentYearCounts = [];
+    
+        foreach ($departments as $department) {
+            $departmentAcronym = $department->acronym;
+    
+            // If department is non_teaching, include in 'ACAD'
+            if ($department->non_teaching) {
+                $departmentAcronym = 'ACAD';
+            }
+    
+            foreach (range($fiveYearsAgo, $currentYear) as $year) {
+                $departmentYearCounts[$departmentAcronym][$year] = 0;
+            }
+        }
+    
+        foreach ($trainings as $training) {
+            $employees = $training->employees;
+    
+            foreach ($employees as $employee) {
+                $departmentId = $employee->department_id;
+                $department = Department::find($departmentId);
+    
+                if ($department) {
+                    $departmentAcronym = $department->acronym;
+    
+                    if ($department->non_teaching) {
+                        $departmentAcronym = 'ACAD';
+                    }
+    
+                    $year = $training->created_at->format('Y');
+                    $departmentYearCounts[$departmentAcronym][$year]++;
+                }
+            }
+        }
+    
+        $formattedData = [];
+    
+        foreach ($departmentYearCounts as $label => $count) {
+            $formattedData[] = [
+                'label' => $label,
+                'count' => collect($count)->map(function ($value, $year) {
+                    return ['year' => $year, 'value' => $value];
+                })->values()->all(),
+                'backgroundColor' => Department::where('acronym', $label)->value('color'), // Assuming 'color' is the field in the Department model
+            ];
+        }
+    
+        $currentYear = date('Y');
+        $fiveYearsAgo = $currentYear - 5;
+        $years = range($fiveYearsAgo, $currentYear);
+
+        $finalData = [
+            'years' => $years,
+            'data' => $formattedData,
+        ];
+
+        return $finalData;
+    }
+    
+    
 
 }
