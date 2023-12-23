@@ -148,4 +148,7 @@ class Employee extends Model
         return null; 
     }
 
+    public function awards() {
+        return $this->hasMany(Award::class);
+    }
 }

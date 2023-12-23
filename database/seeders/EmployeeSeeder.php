@@ -26,6 +26,7 @@ class EmployeeSeeder extends Seeder
         // Get all available positions
         $positions = Position::all();
 
+        Employee::truncate();
         $employees = Employee::factory()->count(15)->create([
             'employee_id' => function () use (&$ids) {
                 return array_shift($ids);
@@ -41,6 +42,8 @@ class EmployeeSeeder extends Seeder
                 return $position->department_id;
             },
         ]);
+        $this->call(EmployeeTrainingSeeder::class);
+
     }
 
 }
