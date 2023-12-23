@@ -14,6 +14,7 @@ use App\Models\Opcr;
 use App\Models\IpcrPeriod;
 use App\Models\IpcrEvaluation;
 use App\Models\Training;
+use App\Models\Award;
 
 class DashboardService implements DashboardServiceInterface
 {
@@ -472,6 +473,52 @@ class DashboardService implements DashboardServiceInterface
 
         return $finalData;
     }
+
+    public function awards() 
+    {
+        $currentYear = date('Y');
+        $fiveYearsAgo = $currentYear - 5;
+        $awards = Award::whereYear('date_awarded', '>=', $fiveYearsAgo)
+            ->whereYear('date_awarded', '<=', $currentYear)
+            ->get();
+    
+        $departmentYearCounts = [];
+    
+        foreach ($awards as $award) {
+            $employee = $award->employee;
+            $department = $employee->department;
+    
+            if ($department) {
+                $departmentAcronym = $department->acronym;
+                $year = $award->date_awarded->format('Y');
+    
+                // If department is non_teaching, include in 'ACAD'
+                if ($department->non_teaching) {
+                    $departmentAcronym = 'ACAD';
+                }
+    
+                if (!isset($departmentYearCounts[$departmentAcronym][$year])) {
+                    $departmentYearCounts[$departmentAcronym][$year] = 0;
+                }
+                $departmentYearCounts[$departmentAcronym][$year]++;
+            }
+        }
+    
+        $formattedData = [];
+    
+        foreach ($departmentYearCounts as $label => $count) {
+            $formattedData[] = [
+                'label' => $label,
+                'count' => collect($count)->map(function ($value, $year) {
+                    return ['year' => $year, 'value' => $value];
+                })->values()->all(),
+                'backgroundColor' => Department::where('acronym', $label)->value('color'), // Assuming 'color' is the field in the Department model
+            ];
+        }
+    
+        return $formattedData;
+    }
+    
     
     
 

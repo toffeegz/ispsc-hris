@@ -127,4 +127,10 @@ class DashboardController extends Controller
         $results = $this->modelService->trainings();
         return $this->responseService->successResponse($this->name, $results);
     }
+
+    public function awards()
+    {
+        $results = $this->modelService->awards();
+        return $this->responseService->successResponse($this->name, $results);
+    }
 }
