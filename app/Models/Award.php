@@ -18,6 +18,10 @@ class Award extends Model
         'date_awarded',
     ];
 
+    protected $casts = [
+        'date_awarded' => 'datetime',
+    ];
+
     public function scopeFilter($query, array $filters)
     {
         $search = $filters['search'] ?? null;
