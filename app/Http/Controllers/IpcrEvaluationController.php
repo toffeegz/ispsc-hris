@@ -67,4 +67,10 @@ class IpcrEvaluationController extends Controller
         $result = $this->modelRepository->restore($id);
         return $this->responseService->successResponse($this->name, $result);
     }
+
+    public function import(Request $request)
+    {
+        $result = $this->modelService->import($request->file('file'), $request->ipcr_period_id);
+        return $this->responseService->successResponse($this->name, $result);
+    }
 }

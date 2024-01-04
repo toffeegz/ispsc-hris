@@ -44,13 +44,14 @@ class IpcrEvaluation extends Model
             2 => 'Unsatisfactory',
             1 => 'Poor',
         ];
-
-        // Get the total average rating
-        $totalAverageRating = $this->final_average_rating;
-
+    
+        // Get the total average rating and convert it to a whole number
+        $totalAverageRating = (int) round($this->final_average_rating);
+    
         // Use the mapping to determine the adjectival rating
         return $adjectivalRatings[$totalAverageRating] ?? 'Unknown';
     }
+    
 
 
     public function evaluations()

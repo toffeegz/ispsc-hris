@@ -481,31 +481,45 @@ class DashboardService implements DashboardServiceInterface
         $awards = Award::whereYear('date_awarded', '>=', $fiveYearsAgo)
             ->whereYear('date_awarded', '<=', $currentYear)
             ->get();
-    
+
         $departmentYearCounts = [];
-    
-        foreach ($awards as $award) {
-            $employee = $award->employee;
-            $department = $employee->department;
-    
-            if ($department) {
+
+        // Create years array from the last 5 years
+        $years = range($fiveYearsAgo, $currentYear);
+
+        // Initialize department counts for each year
+        foreach ($years as $year) {
+            foreach (Department::all() as $department) {
                 $departmentAcronym = $department->acronym;
-                $year = $award->date_awarded->format('Y');
-    
+
                 // If department is non_teaching, include in 'ACAD'
                 if ($department->non_teaching) {
                     $departmentAcronym = 'ACAD';
                 }
-    
-                if (!isset($departmentYearCounts[$departmentAcronym][$year])) {
-                    $departmentYearCounts[$departmentAcronym][$year] = 0;
+
+                $departmentYearCounts[$departmentAcronym][$year] = 0;
+            }
+        }
+
+        foreach ($awards as $award) {
+            $employee = $award->employee;
+            $department = $employee->department;
+
+            if ($department) {
+                $departmentAcronym = $department->acronym;
+                $year = $award->date_awarded->format('Y');
+
+                // If department is non_teaching, include in 'ACAD'
+                if ($department->non_teaching) {
+                    $departmentAcronym = 'ACAD';
                 }
+
                 $departmentYearCounts[$departmentAcronym][$year]++;
             }
         }
-    
+
         $formattedData = [];
-    
+
         foreach ($departmentYearCounts as $label => $count) {
             $formattedData[] = [
                 'label' => $label,
@@ -515,10 +529,16 @@ class DashboardService implements DashboardServiceInterface
                 'backgroundColor' => Department::where('acronym', $label)->value('color'), // Assuming 'color' is the field in the Department model
             ];
         }
-    
-        return $formattedData;
+
+        // Prepare the final structured data
+        $finalData = [
+            'years' => $years,
+            'data' => $formattedData,
+        ];
+
+        return $finalData;
     }
-    
+
     
     
 
