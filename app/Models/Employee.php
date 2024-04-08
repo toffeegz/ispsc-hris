@@ -31,10 +31,11 @@ class Employee extends Model
         'position_id',
         'employment_status_id',
         'schedule_id',
-        'reason_for_deletion'
+        'reason_for_deletion',
+        'deleted_by'
     ];
 
-    protected $appends = ['full_name', 'full_name_formal', 'is_flexible', 'employment_status_name'];
+    protected $appends = ['full_name', 'full_name_formal', 'is_flexible', 'employment_status_name', 'deleted_by_name']; 
 
     public function scopeFilter($query, array $filters)
     {
@@ -86,6 +87,16 @@ class Employee extends Model
         }
 
         return $full_name;
+    }
+
+    public function getDeletedByNameAttribute()
+    {
+        return $this->deletedBy ? $this->deletedBy->full_name_formal : null;
+    }
+
+    public function deletedBy()
+    {
+        return $this->belongsTo(Employee::class, 'deleted_by');
     }
 
     public function getIsFlexibleAttribute()

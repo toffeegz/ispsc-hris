@@ -30,11 +30,14 @@ class IpcrEvaluationRepository extends BaseRepository implements IpcrEvaluationR
 
         // Filter by adjectival_rating if it exists in the payload
         if (isset($payload['adjectival_rating'])) {
-            $adjectivalRating = intval($payload['adjectival_rating']);
-            $query = $query->where(function ($query) use ($adjectivalRating) {
-                $query->where('final_average_rating', '>=', $adjectivalRating)
-                    ->orWhere('final_average_rating', 'like', $adjectivalRating . '.%');
-            });
+            if($payload['adjectival_rating'] != 'all') {
+                $adjectivalRating = intval($payload['adjectival_rating']);
+                $query = $query->where(function ($query) use ($adjectivalRating) {
+                    $query->where('final_average_rating', '>=', $adjectivalRating)
+                        ->orWhere('final_average_rating', 'like', $adjectivalRating . '.%');
+                });
+            }
+            
         }
 
         // Filter by period_id if it exists in the payload
