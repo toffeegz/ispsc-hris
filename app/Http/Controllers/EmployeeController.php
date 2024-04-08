@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\EmployeeStoreRequest;
 use App\Http\Requests\EmployeeUpdateRequest;
 use App\Http\Requests\EmployeeUpdateEducationRequest;
@@ -40,6 +41,12 @@ class EmployeeController extends Controller
     {
         $result = $this->modelRepository->store($request->all());
         return $this->responseService->storeResponse($this->name, $result);
+    }
+
+    public function deleteEmployee(Request $request)
+    {
+        $result = $this->modelRepository->deleteEmployee($request->all());
+        return $this->responseService->successResponse($this->name, $result);
     }
 
     public function update(EmployeeUpdateRequest $request, $id)

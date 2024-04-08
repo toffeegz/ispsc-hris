@@ -85,9 +85,10 @@ class IpcrEvaluation extends Model
         $query->when($search, function ($query) use ($search) {
             $query->where(function ($query) use ($search) {
                 $query->whereHas('employee', function ($subQuery) use ($search) {
-                    $subQuery->where('first_name', 'like', '%' . $search . '%')
-                        ->orWhere('last_name', 'like', '%' . $search . '%')
-                        ->orWhere('employee_id', 'like', '%' . $search . '%');
+                    $searchTerm = '%' . $search . '%';
+                    $subQuery->where('first_name', 'ILIKE', $searchTerm)
+                        ->orWhere('last_name', 'ILIKE', $searchTerm)
+                        ->orWhere('employee_id', 'ILIKE', $searchTerm);
                 });
             });
         });

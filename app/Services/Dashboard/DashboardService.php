@@ -37,6 +37,7 @@ class DashboardService implements DashboardServiceInterface
 
         if ($frequency !== "specific_date") {
             $betweenDates = $this->betweenDates($frequency);
+
             $start_date = $betweenDates['start_date'];
             $end_date = $betweenDates['end_date'];
         }
@@ -53,7 +54,7 @@ class DashboardService implements DashboardServiceInterface
                 $attendances = Attendance::whereIn('employee_id', $departmentEmployees->pluck('id')->toArray())
                     ->whereBetween('date', [$start_date, $end_date])
                     ->get();
-
+                logger($attendances);
                 // Calculate total tardiness time (in minutes)
                 $totalTardinessTime = $attendances->sum('undertime');
 
@@ -300,8 +301,8 @@ class DashboardService implements DashboardServiceInterface
         }
 
         return [
-            'start_date' => $start_date,
-            'end_date' => $end_date,
+            'start_date' => $start_date->format('Y-m-d'),
+            'end_date' => $end_date->format('Y-m-d'),
         ];
     }
 
@@ -348,20 +349,27 @@ class DashboardService implements DashboardServiceInterface
         return $ipcrEvaluations;
     }
 
-    public function ipcrGraph($ipcr_period_id)
+    public function ipcrGraph($ipcr_period_id, $department_id)
     {
         if (!$ipcr_period_id) {
             $latest_ipcr_period = IpcrPeriod::orderBy('year', 'desc')
                 ->orderBy('start_month', 'desc')
                 ->first();
-
+    
             if ($latest_ipcr_period) {
                 $ipcr_period_id = $latest_ipcr_period->id;
             }
         }
     
-        $evaluationCounts = IpcrEvaluation::where('ipcr_period_id', $ipcr_period_id)
-            ->selectRaw('ROUND(final_average_rating) as rounded_rating, COUNT(*) as count')
+        $query = IpcrEvaluation::where('ipcr_period_id', $ipcr_period_id);
+    
+        if ($department_id) {
+            $query->whereHas('employee', function ($query) use ($department_id) {
+                $query->where('department_id', $department_id);
+            });
+        }
+    
+        $evaluationCounts = $query->selectRaw('ROUND(final_average_rating) as rounded_rating, COUNT(*) as count')
             ->groupBy('rounded_rating')
             ->get();
     
@@ -382,6 +390,7 @@ class DashboardService implements DashboardServiceInterface
             'data' => $data,
         ];
     }
+    
 
     public function employeesGender()
     {
