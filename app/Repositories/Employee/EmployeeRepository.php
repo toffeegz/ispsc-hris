@@ -134,4 +134,24 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
             return $e->getMessage();
         }
     }
+
+    public function deleteEmployee(array $payload)
+    {
+        DB::beginTransaction();
+        try {
+            $employee = $this->model->find($payload['id']);
+
+            $employee->reason_for_deletion = $payload['reason'];
+            $employee->save();
+
+            $employee->delete();
+            DB::commit();
+
+            return $employee;
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return $e->getMessage();
+        }
+    }
 }

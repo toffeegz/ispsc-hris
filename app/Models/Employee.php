@@ -31,6 +31,7 @@ class Employee extends Model
         'position_id',
         'employment_status_id',
         'schedule_id',
+        'reason_for_deletion'
     ];
 
     protected $appends = ['full_name', 'full_name_formal', 'is_flexible', 'employment_status_name'];
