@@ -24,6 +24,7 @@ class Training extends Model
         'period_to',
         'hours',
         'type_of_ld',
+        'url',
     ];
 
     public function scopeFilter($query, array $filters)
@@ -33,10 +34,11 @@ class Training extends Model
             ->when($filters['search'] ?? false, 
             function($query) use($search) {
                 $query->where(function($query) use($search) {
-                    $query->where('title', 'like', '%' . $search . '%')
-                        ->orWhere('description', 'like', '%' . $search . '%')
-                        ->orWhere('conducted_by', 'like', '%' . $search . '%')
-                        ->orWhere('type_of_ld', 'like', '%' . $search . '%');
+                    $searchTerm = '%' . $search . '%';
+                    $query->where('title', 'ILIKE', $searchTerm)
+                        ->orWhere('description', 'ILIKE', $searchTerm)
+                        ->orWhere('conducted_by', 'ILIKE', $searchTerm)
+                        ->orWhere('type_of_ld', 'ILIKE', $searchTerm);
                 });
             }
         );

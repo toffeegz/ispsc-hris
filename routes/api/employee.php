@@ -10,7 +10,7 @@ Route::prefix('employees')->group(function() {
     Route::post('/', [EmployeeController::class, 'store'])->name('employee.store');
     Route::put('/{employee}', [EmployeeController::class, 'update'])->name('employee.update');
     Route::delete('/{employee}', [EmployeeController::class, 'delete'])->name('employee.delete');
-    Route::get('/restore/{employee}', [EmployeeController::class, 'restore'])->name('employee.restore');
+    Route::get('/restore/{employee}', [EmployeeController::class, 'restore'])->name('employee.restore'); // put
     Route::put('/education/{employee}', [EmployeeController::class, 'education'])->name('employee.education');
     Route::put('/training/{employee}', [EmployeeController::class, 'training'])->name('employee.training');
 });

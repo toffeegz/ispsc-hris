@@ -40,17 +40,19 @@ class Leave extends Model
         
         $query->when($search, function ($query) use ($search) {
             $query->where(function ($query) use ($search) {
-                $query->whereHas('employee', function ($subQuery) use ($search) {
-                    $subQuery->where('first_name', 'like', '%' . $search . '%')
-                        ->orWhere('last_name', 'like', '%' . $search . '%')
-                        ->orWhere('employee_id', 'like', '%' . $search . '%');
+                $searchTerm = '%' . $search . '%';
+
+                $query->whereHas('employee', function ($subQuery) use ($searchTerm) {
+                    $subQuery->where('first_name', 'ILIKE', $searchTerm)
+                        ->orWhere('last_name', 'ILIKE', $searchTerm)
+                        ->orWhere('employee_id', 'ILIKE', $searchTerm);
                 })
-                ->orWhereHas('leave_type', function ($subQuery) use ($search) {
-                    $subQuery->where('name', 'like', '%' . $search . '%');
+                ->orWhereHas('leave_type', function ($subQuery) use ($searchTerm) {
+                    $subQuery->where('name', 'ILIKE', $searchTerm);
                 })
-                ->orWhere('date_start', 'like', '%' . $search . '%')
-                ->orWhere('date_end', 'like', '%' . $search . '%')
-                ->orWhere('details_of_leave', 'like', '%' . $search . '%');
+                ->orWhere('date_start', 'ILIKE', $searchTerm)
+                ->orWhere('date_end', 'ILIKE', $searchTerm)
+                ->orWhere('details_of_leave', 'ILIKE', $searchTerm);
             });
         });
     }

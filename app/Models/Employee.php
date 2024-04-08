@@ -42,12 +42,14 @@ class Employee extends Model
             ->when($filters['search'] ?? false, 
             function($query) use($search) {
                 $query->where(function($query) use($search) {
-                    $query->where('last_name', 'like', '%' . $search . '%')
-                        ->orWhere('first_name', 'like', '%' . $search . '%')
-                        ->orWhere('middle_name', 'like', '%' . $search . '%')
-                        ->orWhere('name_ext', 'like', '%' . $search . '%')
-                        ->orWhere('email', 'like', '%' . $search . '%')
-                        ->orWhere('mobile_no', 'like', '%' . $search . '%');
+                    $searchTerm = '%' . $search . '%';
+                    $query->where('last_name', 'ILIKE', $searchTerm)
+                        ->orWhere('first_name', 'ILIKE', $searchTerm)
+                        ->orWhere('middle_name', 'ILIKE', $searchTerm)
+                        ->orWhere('name_ext', 'ILIKE', $searchTerm)
+                        ->orWhere('email', 'ILIKE', $searchTerm)
+                        ->orWhere('mobile_no', 'ILIKE', $searchTerm)
+                        ->orWhere('employee_id', 'ILIKE', $searchTerm);
                 });
             }
         );

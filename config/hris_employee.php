@@ -22,7 +22,10 @@ return [
     'employment_status' => [
         'Regular',
         'Probation',
-        'Training'
+        'Training',
+        'Retired',
+        'Resigned',
+        'Terminated',
     ],
 
 ];

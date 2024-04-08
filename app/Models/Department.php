@@ -27,8 +27,8 @@ class Department extends Model
             ->when($filters['search'] ?? false, 
             function($query) use($search) {
                 $query->where(function($query) use($search) {
-                    $query->where('name', 'like', '%' . $search . '%')
-                        ->orWhere('description', 'like', '%' . $search . '%');
+                    $search = '%' . $search . '%';
+                    $query->where('name', 'ILIKE', $search);
                 });
             }
         );
