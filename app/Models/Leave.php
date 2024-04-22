@@ -20,12 +20,15 @@ class Leave extends Model
         'time_end',
         'leave_type_id',
         'status',
+        'remarks',
+        'credit',
         'details_of_leave',
         'disapproved_for',
         'approved_for',
         'approved_for_type',
         'commutation',
     ];
+    protected $appends = ['type'];
 
     public function scopeFilter($query, array $filters)
     {
@@ -37,17 +40,19 @@ class Leave extends Model
         
         $query->when($search, function ($query) use ($search) {
             $query->where(function ($query) use ($search) {
-                $query->whereHas('employee', function ($subQuery) use ($search) {
-                    $subQuery->where('first_name', 'like', '%' . $search . '%')
-                        ->orWhere('last_name', 'like', '%' . $search . '%')
-                        ->orWhere('employee_id', 'like', '%' . $search . '%');
+                $searchTerm = '%' . $search . '%';
+
+                $query->whereHas('employee', function ($subQuery) use ($searchTerm) {
+                    $subQuery->where('first_name', 'ILIKE', $searchTerm)
+                        ->orWhere('last_name', 'ILIKE', $searchTerm)
+                        ->orWhere('employee_id', 'ILIKE', $searchTerm);
                 })
-                ->orWhereHas('leave_type', function ($subQuery) use ($search) {
-                    $subQuery->where('name', 'like', '%' . $search . '%');
+                ->orWhereHas('leave_type', function ($subQuery) use ($searchTerm) {
+                    $subQuery->where('name', 'ILIKE', $searchTerm);
                 })
-                ->orWhere('date_start', 'like', '%' . $search . '%')
-                ->orWhere('date_end', 'like', '%' . $search . '%')
-                ->orWhere('details_of_leave', 'like', '%' . $search . '%');
+                ->orWhere('date_start', 'ILIKE', $searchTerm)
+                ->orWhere('date_end', 'ILIKE', $searchTerm)
+                ->orWhere('details_of_leave', 'ILIKE', $searchTerm);
             });
         });
     }
@@ -64,4 +69,24 @@ class Leave extends Model
         return $this->belongsTo(LeaveType::class, 'leave_type_id');
     }
 
+    // public function getStatusAttribute()
+    // {
+    //     if ($this->attributes['status'] === 0) {
+    //         return 'On-time';
+    //     } elseif ($this->attributes['status'] === 1) {
+    //         return 'Late Filing';
+    //     } else {
+    //         return 'Unknown'; // If the status doesn't match expected values
+    //     }
+    // }
+
+    public function getTypeAttribute()
+    {
+        // Assuming 'acronym' is the attribute you want to retrieve from the related LeaveType model
+        if ($this->leave_type) {
+            return $this->leave_type->acronym;
+        }
+        
+        return null; // Or any default value if the relationship doesn't exist or has no acronym
+    }
 }

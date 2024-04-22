@@ -29,10 +29,13 @@ class Employee extends Model
         'user_id',
         'department_id',
         'position_id',
+        'employment_status_id',
         'schedule_id',
+        'reason_for_deletion',
+        'deleted_by'
     ];
 
-    protected $appends = ['full_name', 'full_name_formal', 'is_flexible'];
+    protected $appends = ['full_name', 'full_name_formal', 'is_flexible', 'employment_status_name', 'deleted_by_name']; 
 
     public function scopeFilter($query, array $filters)
     {
@@ -41,12 +44,14 @@ class Employee extends Model
             ->when($filters['search'] ?? false, 
             function($query) use($search) {
                 $query->where(function($query) use($search) {
-                    $query->where('last_name', 'like', '%' . $search . '%')
-                        ->orWhere('first_name', 'like', '%' . $search . '%')
-                        ->orWhere('middle_name', 'like', '%' . $search . '%')
-                        ->orWhere('name_ext', 'like', '%' . $search . '%')
-                        ->orWhere('email', 'like', '%' . $search . '%')
-                        ->orWhere('mobile_no', 'like', '%' . $search . '%');
+                    $searchTerm = '%' . $search . '%';
+                    $query->where('last_name', 'ILIKE', $searchTerm)
+                        ->orWhere('first_name', 'ILIKE', $searchTerm)
+                        ->orWhere('middle_name', 'ILIKE', $searchTerm)
+                        ->orWhere('name_ext', 'ILIKE', $searchTerm)
+                        ->orWhere('email', 'ILIKE', $searchTerm)
+                        ->orWhere('mobile_no', 'ILIKE', $searchTerm)
+                        ->orWhere('employee_id', 'ILIKE', $searchTerm);
                 });
             }
         );
@@ -84,6 +89,16 @@ class Employee extends Model
         return $full_name;
     }
 
+    public function getDeletedByNameAttribute()
+    {
+        return $this->deletedBy ? $this->deletedBy->full_name_formal : null;
+    }
+
+    public function deletedBy()
+    {
+        return $this->belongsTo(Employee::class, 'deleted_by');
+    }
+
     public function getIsFlexibleAttribute()
     {
         // Assuming you have a relationship to the Schedule model named 'schedule'
@@ -105,6 +120,11 @@ class Employee extends Model
     public function position()
     {
         return $this->belongsTo(Position::class, 'position_id');
+    }
+
+    public function employment_status()
+    {
+        return $this->belongsTo(EmploymentStatus::class, 'employment_status_id');
     }
 
     public function trainings()
@@ -131,6 +151,18 @@ class Employee extends Model
         });
     }
 
+    public function getEmploymentStatusNameAttribute()
+    {
+        $employmentStatus = $this->employment_status()->first();
 
+        if ($employmentStatus) {
+            return $employmentStatus->name;
+        }
 
+        return null; 
+    }
+
+    public function awards() {
+        return $this->hasMany(Award::class);
+    }
 }

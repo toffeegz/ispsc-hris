@@ -29,6 +29,7 @@ class TrainingRequest extends FormRequest
             'period_to' => 'nullable|date|after_or_equal:period_from',
             'hours' => 'nullable|integer|min:1|max:14600', // Assuming hours can range from 1 to 40
             'type_of_ld' => 'nullable|string|max:255',
+            'url' => 'nullable|string|max:255',
         ];
     }
 }

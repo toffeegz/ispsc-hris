@@ -12,6 +12,7 @@ use App\Repositories\Base\BaseRepository;
 use App\Repositories\Training\TrainingRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInterface
 {
@@ -131,6 +132,27 @@ class EmployeeRepository extends BaseRepository implements EmployeeRepositoryInt
             return "Trainings & Seminars Updated Successfully!";
         } catch (\Exception $e) {
             DB::rollBack();
+            return $e->getMessage();
+        }
+    }
+
+    public function deleteEmployee(array $payload)
+    {
+        DB::beginTransaction();
+        try {
+            $employee = $this->model->find($payload['id']);
+
+            $employee->reason_for_deletion = $payload['reason'];
+            $employee->deleted_by = Auth::user()->id;
+            $employee->save();
+
+            $employee->delete();
+            DB::commit();
+
+            return $employee;
+        } catch (\Exception $e) {
+            DB::rollBack();
+
             return $e->getMessage();
         }
     }

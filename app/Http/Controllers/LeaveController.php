@@ -53,7 +53,7 @@ class LeaveController extends Controller
 
     public function store(ModelRequest $request)
     {
-        $result = $this->modelRepository->create($request->all());
+        $result = $this->modelRepository->store($request->all());
         return $this->responseService->storeResponse($this->name, $result);
     }
 

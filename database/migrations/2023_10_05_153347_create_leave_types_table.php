@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('leave_types', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
+            $table->string('acronym');
             $table->text('description')->nullable();
             $table->boolean('is_deletable')->default(true);
             $table->string('date_period')->nullable();

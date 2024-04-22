@@ -7,12 +7,16 @@ use App\Repositories\IpcrEvaluation\IpcrEvaluationRepositoryInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+
+use App\Imports\ImportIpcr;
 use App\Models\IpcrEvaluation;
 use App\Models\IpcrCategory;
 use App\Models\IpcrSubcategory;
 use App\Models\IpcrEvaluationItem;
 use App\Models\IpcrSubcategoryRating;
 use App\Models\Department;
+use App\Models\Employee;
 
 class IpcrEvaluationService implements IpcrEvaluationServiceInterface
 {
@@ -217,5 +221,43 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
         // Return whatever response or data is appropriate for your application
         return $new_data;
     }
+
+    public function import($file, $ipcr_period_id)
+    {
+        try {
+            $lines = Excel::toArray(new ImportIpcr(), $file);
+            
+            // Assuming the first row contains headers, so skipping it
+            $dataRows = array_slice($lines[0], 1); // Ignore the first row
+            
+            $ipcrEvaluations = [];
+            
+            foreach ($dataRows as $row) {
+                $employeeId = $row[0]; 
+                $finalRating = $row[1]; 
+
+                $employee = Employee::where('employee_id', $employeeId)->first();
+                
+                if ($employee) {
+                    $ipcrEvaluation = [];
+                    $ipcrEvaluation['employee_id'] = $employee->id;
+                    $ipcrEvaluation['final_average_rating'] = $finalRating;
+                    $ipcrEvaluation['ipcr_period_id'] = $ipcr_period_id; 
+                    $ipcrEvaluation['data'] = json_encode($ipcrEvaluation);
+                    $results = $this->modelRepository->create($ipcrEvaluation);
+                    $ipcrEvaluations[] = $results;
+
+                }
+            }
+            
+            // Save the IpcrEvaluation instances to the database
+            // $results = $this->modelRepository->create($ipcrEvaluations);
+            return $ipcrEvaluations;
+            // return "Import Successful!";
+        } catch (\Exception $exception) {
+            throw ValidationException::withMessages([$exception->getMessage()]);
+        }
+    }
+    
 
 }

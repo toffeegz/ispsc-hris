@@ -38,6 +38,7 @@ class EmployeeStoreRequest extends FormRequest
             'date_hired' => ['nullable', 'date'],
             'department_id' => ['nullable', 'exists:departments,id'],
             'position_id' => ['nullable', 'exists:positions,id'],
+            'employment_status_id' => ['nullable', 'exists:employment_statuses,id'],
             'is_flexible' => ['required', 'boolean'],
 
             'educational_backgrounds' => ['nullable', 'array'], // Array of educational backgrounds

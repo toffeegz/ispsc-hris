@@ -11,4 +11,6 @@ Route::prefix('ipcr_evaluations')->group(function() {
     Route::put('/{ipcr_evaluation}', [IpcrEvaluationController::class, 'update'])->name('ipcr_evaluation.update');
     Route::delete('/{ipcr_evaluation}', [IpcrEvaluationController::class, 'delete'])->name('ipcr_evaluation.delete');
     Route::get('/restore/{ipcr_evaluation}', [IpcrEvaluationController::class, 'restore'])->name('ipcr_evaluation.restore');
+    
+    Route::post('/import/', [IpcrEvaluationController::class, 'import'])->name('ipcr_evaluation.import');
 });

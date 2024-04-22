@@ -44,13 +44,14 @@ class IpcrEvaluation extends Model
             2 => 'Unsatisfactory',
             1 => 'Poor',
         ];
-
-        // Get the total average rating
-        $totalAverageRating = $this->final_average_rating;
-
+    
+        // Get the total average rating and convert it to a whole number
+        $totalAverageRating = (int) round($this->final_average_rating);
+    
         // Use the mapping to determine the adjectival rating
         return $adjectivalRatings[$totalAverageRating] ?? 'Unknown';
     }
+    
 
 
     public function evaluations()
@@ -84,9 +85,10 @@ class IpcrEvaluation extends Model
         $query->when($search, function ($query) use ($search) {
             $query->where(function ($query) use ($search) {
                 $query->whereHas('employee', function ($subQuery) use ($search) {
-                    $subQuery->where('first_name', 'like', '%' . $search . '%')
-                        ->orWhere('last_name', 'like', '%' . $search . '%')
-                        ->orWhere('employee_id', 'like', '%' . $search . '%');
+                    $searchTerm = '%' . $search . '%';
+                    $subQuery->where('first_name', 'ILIKE', $searchTerm)
+                        ->orWhere('last_name', 'ILIKE', $searchTerm)
+                        ->orWhere('employee_id', 'ILIKE', $searchTerm);
                 });
             });
         });

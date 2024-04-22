@@ -13,6 +13,8 @@ use App\Models\Employee;
 use App\Models\Opcr;
 use App\Models\IpcrPeriod;
 use App\Models\IpcrEvaluation;
+use App\Models\Training;
+use App\Models\Award;
 
 class DashboardService implements DashboardServiceInterface
 {
@@ -35,6 +37,7 @@ class DashboardService implements DashboardServiceInterface
 
         if ($frequency !== "specific_date") {
             $betweenDates = $this->betweenDates($frequency);
+
             $start_date = $betweenDates['start_date'];
             $end_date = $betweenDates['end_date'];
         }
@@ -51,7 +54,7 @@ class DashboardService implements DashboardServiceInterface
                 $attendances = Attendance::whereIn('employee_id', $departmentEmployees->pluck('id')->toArray())
                     ->whereBetween('date', [$start_date, $end_date])
                     ->get();
-
+                logger($attendances);
                 // Calculate total tardiness time (in minutes)
                 $totalTardinessTime = $attendances->sum('undertime');
 
@@ -298,8 +301,8 @@ class DashboardService implements DashboardServiceInterface
         }
 
         return [
-            'start_date' => $start_date,
-            'end_date' => $end_date,
+            'start_date' => $start_date->format('Y-m-d'),
+            'end_date' => $end_date->format('Y-m-d'),
         ];
     }
 
@@ -346,20 +349,27 @@ class DashboardService implements DashboardServiceInterface
         return $ipcrEvaluations;
     }
 
-    public function ipcrGraph($ipcr_period_id)
+    public function ipcrGraph($ipcr_period_id, $department_id)
     {
         if (!$ipcr_period_id) {
             $latest_ipcr_period = IpcrPeriod::orderBy('year', 'desc')
                 ->orderBy('start_month', 'desc')
                 ->first();
-
+    
             if ($latest_ipcr_period) {
                 $ipcr_period_id = $latest_ipcr_period->id;
             }
         }
     
-        $evaluationCounts = IpcrEvaluation::where('ipcr_period_id', $ipcr_period_id)
-            ->selectRaw('ROUND(final_average_rating) as rounded_rating, COUNT(*) as count')
+        $query = IpcrEvaluation::where('ipcr_period_id', $ipcr_period_id);
+    
+        if ($department_id) {
+            $query->whereHas('employee', function ($query) use ($department_id) {
+                $query->where('department_id', $department_id);
+            });
+        }
+    
+        $evaluationCounts = $query->selectRaw('ROUND(final_average_rating) as rounded_rating, COUNT(*) as count')
             ->groupBy('rounded_rating')
             ->get();
     
@@ -380,5 +390,165 @@ class DashboardService implements DashboardServiceInterface
             'data' => $data,
         ];
     }
+    
+
+    public function employeesGender()
+    {
+        $maleCount = Employee::where('sex', 'male')->count();
+        $femaleCount = Employee::where('sex', 'female')->count();
+
+        // Fetching colors from config
+        $colorsConfig = config('hris.dashboard_colors.employees');
+        
+        return [
+            [
+                'label' => 'Male',
+                'count' => $maleCount,
+                'backgroundColor' => $colorsConfig['male'],
+            ],
+            [
+                'label' => 'Female',
+                'count' => $femaleCount,
+                'backgroundColor' => $colorsConfig['female'],
+            ],
+        ];
+    }
+
+    public function trainings() 
+    {
+        $currentYear = date('Y');
+        $fiveYearsAgo = $currentYear - 5;
+        $trainings = Training::whereYear('created_at', '>=', $fiveYearsAgo)
+            ->whereYear('created_at', '<=', $currentYear)
+            ->get();
+    
+        $departments = Department::all();
+    
+        $departmentYearCounts = [];
+    
+        foreach ($departments as $department) {
+            $departmentAcronym = $department->acronym;
+    
+            // If department is non_teaching, include in 'ACAD'
+            if ($department->non_teaching) {
+                $departmentAcronym = 'ACAD';
+            }
+    
+            foreach (range($fiveYearsAgo, $currentYear) as $year) {
+                $departmentYearCounts[$departmentAcronym][$year] = 0;
+            }
+        }
+    
+        foreach ($trainings as $training) {
+            $employees = $training->employees;
+    
+            foreach ($employees as $employee) {
+                $departmentId = $employee->department_id;
+                $department = Department::find($departmentId);
+    
+                if ($department) {
+                    $departmentAcronym = $department->acronym;
+    
+                    if ($department->non_teaching) {
+                        $departmentAcronym = 'ACAD';
+                    }
+    
+                    $year = $training->created_at->format('Y');
+                    $departmentYearCounts[$departmentAcronym][$year]++;
+                }
+            }
+        }
+    
+        $formattedData = [];
+    
+        foreach ($departmentYearCounts as $label => $count) {
+            $formattedData[] = [
+                'label' => $label,
+                'count' => collect($count)->map(function ($value, $year) {
+                    return ['year' => $year, 'value' => $value];
+                })->values()->all(),
+                'backgroundColor' => Department::where('acronym', $label)->value('color'), // Assuming 'color' is the field in the Department model
+            ];
+        }
+    
+        $currentYear = date('Y');
+        $fiveYearsAgo = $currentYear - 5;
+        $years = range($fiveYearsAgo, $currentYear);
+
+        $finalData = [
+            'years' => $years,
+            'data' => $formattedData,
+        ];
+
+        return $finalData;
+    }
+
+    public function awards() 
+    {
+        $currentYear = date('Y');
+        $fiveYearsAgo = $currentYear - 5;
+        $awards = Award::whereYear('date_awarded', '>=', $fiveYearsAgo)
+            ->whereYear('date_awarded', '<=', $currentYear)
+            ->get();
+
+        $departmentYearCounts = [];
+
+        // Create years array from the last 5 years
+        $years = range($fiveYearsAgo, $currentYear);
+
+        // Initialize department counts for each year
+        foreach ($years as $year) {
+            foreach (Department::all() as $department) {
+                $departmentAcronym = $department->acronym;
+
+                // If department is non_teaching, include in 'ACAD'
+                if ($department->non_teaching) {
+                    $departmentAcronym = 'ACAD';
+                }
+
+                $departmentYearCounts[$departmentAcronym][$year] = 0;
+            }
+        }
+
+        foreach ($awards as $award) {
+            $employee = $award->employee;
+            $department = $employee->department;
+
+            if ($department) {
+                $departmentAcronym = $department->acronym;
+                $year = $award->date_awarded->format('Y');
+
+                // If department is non_teaching, include in 'ACAD'
+                if ($department->non_teaching) {
+                    $departmentAcronym = 'ACAD';
+                }
+
+                $departmentYearCounts[$departmentAcronym][$year]++;
+            }
+        }
+
+        $formattedData = [];
+
+        foreach ($departmentYearCounts as $label => $count) {
+            $formattedData[] = [
+                'label' => $label,
+                'count' => collect($count)->map(function ($value, $year) {
+                    return ['year' => $year, 'value' => $value];
+                })->values()->all(),
+                'backgroundColor' => Department::where('acronym', $label)->value('color'), // Assuming 'color' is the field in the Department model
+            ];
+        }
+
+        // Prepare the final structured data
+        $finalData = [
+            'years' => $years,
+            'data' => $formattedData,
+        ];
+
+        return $finalData;
+    }
+
+    
+    
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\EmployeeStoreRequest;
 use App\Http\Requests\EmployeeUpdateRequest;
 use App\Http\Requests\EmployeeUpdateEducationRequest;
@@ -26,13 +27,13 @@ class EmployeeController extends Controller
 
     public function index()
     {
-        $results = $this->modelRepository->lists(request(['search']), ['department', 'position', 'trainings', 'educational_backgrounds']);
+        $results = $this->modelRepository->lists(request(['search']), ['department', 'position', 'employment_status', 'trainings', 'educational_backgrounds']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
     public function archive()
     {
-        $results = $this->modelRepository->archives(request(['search']), ['department', 'position', 'trainings', 'educational_backgrounds']);
+        $results = $this->modelRepository->archives(request(['search']), ['department', 'position', 'employment_status', 'trainings', 'educational_backgrounds']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
@@ -40,6 +41,12 @@ class EmployeeController extends Controller
     {
         $result = $this->modelRepository->store($request->all());
         return $this->responseService->storeResponse($this->name, $result);
+    }
+
+    public function deleteEmployee(Request $request)
+    {
+        $result = $this->modelRepository->deleteEmployee($request->all());
+        return $this->responseService->successResponse($this->name, $result);
     }
 
     public function update(EmployeeUpdateRequest $request, $id)
@@ -50,7 +57,7 @@ class EmployeeController extends Controller
 
     public function show($id)
     {
-        $result = $this->modelRepository->show($id, ['department', 'position', 'trainings', 'educational_backgrounds']);
+        $result = $this->modelRepository->show($id, ['department', 'position', 'trainings', 'educational_backgrounds', 'employment_status']);
         return $this->responseService->successResponse($this->name, $result);
     }
 
