@@ -31,7 +31,7 @@ class AwardSeeder extends Seeder
                 foreach ($employees as $employee) {
                     // Randomly determine the frequency (1-5 times per month)
                     $months = rand(1, 12);
-                    $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $months, $year);
+                    $daysInMonth = Carbon::create($year, $months)->daysInMonth;
                     $frequency = rand(1, 5);
     
                     for ($i = 0; $i < $frequency; $i++) {
