@@ -21,11 +21,18 @@ class OpcrRepository extends BaseRepository implements OpcrRepositoryInterface
         parent::__construct($model);
     }
 
-    public function index(array $search = [], $ipcr_period_id = null, array $relations = [], string $sortByColumn = 'created_at', string $sortBy = 'DESC')
+    public function index(array $search = [], $ipcr_period_id = null, $final_average_rating = 'all', array $relations = [], string $sortByColumn = 'created_at', string $sortBy = 'DESC')
     {
         if($ipcr_period_id) {
             $this->model = $this->model->where('ipcr_period_id', $ipcr_period_id);
         }
+
+        if ($final_average_rating !== 'all' && in_array($final_average_rating, ['1', '2', '3', '4', '5'])) {
+            $minRating = $final_average_rating;
+            $maxRating = $final_average_rating + 0.99; // Considering the decimal places
+    
+            $this->model = $this->model->whereBetween('final_average_rating', [$minRating, $maxRating]);
+        }    
 
         if($relations) {
             $this->model = $this->model->with($relations);

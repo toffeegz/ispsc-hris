@@ -22,7 +22,7 @@ class OpcrController extends Controller
 
     public function index()
     {
-        $results = $this->modelRepository->index(request(['search']), request()->ipcr_period_id, ['departmentHeadEmployee', 'department', 'ipcrPeriod']);
+        $results = $this->modelRepository->index(request(['search']), request()->period_id, request()->adjectival_rating, ['departmentHeadEmployee', 'department', 'ipcrPeriod']);
         return $this->responseService->successResponse($this->name, $results);
     }
 }

@@ -33,8 +33,26 @@ class IpcrEvaluationRepository extends BaseRepository implements IpcrEvaluationR
             if($payload['adjectival_rating'] != 'all') {
                 $adjectivalRating = intval($payload['adjectival_rating']);
                 $query = $query->where(function ($query) use ($adjectivalRating) {
-                    $query->where('final_average_rating', '>=', $adjectivalRating)
-                        ->orWhere('final_average_rating', 'like', $adjectivalRating . '.%');
+                    switch ($adjectivalRating) {
+                        case 5:
+                            $query->where('final_average_rating', '>=', 5);
+                            break;
+                        case 4:
+                            $query->whereBetween('final_average_rating', [4, 4.99]);
+                            break;
+                        case 3:
+                            $query->whereBetween('final_average_rating', [3, 3.99]);
+                            break;
+                        case 2:
+                            $query->whereBetween('final_average_rating', [2, 2.99]);
+                            break;
+                        case 1:
+                            $query->whereBetween('final_average_rating', [1, 1.99]);
+                            break;
+                        default:
+                            // Handle invalid input if necessary
+                            break;
+                    }
                 });
             }
             
