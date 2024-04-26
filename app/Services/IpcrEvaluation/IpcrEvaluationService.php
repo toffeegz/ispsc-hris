@@ -182,23 +182,21 @@ class IpcrEvaluationService implements IpcrEvaluationServiceInterface
     private function getAdjectivalRating($numericRating)
     {
         $adjectivalRatings = [
-            5 => 'Outstanding',
-            4 => 'Very Satisfactory',
-            3 => 'Satisfactory',
-            2 => 'Unsatisfactory',
-            1 => 'Poor',
+            'Outstanding' => [5],
+            'Very Satisfactory' => [4, 4.99],
+            'Satisfactory' => [3, 3.99],
+            'Unsatisfactory' => [2, 2.99],
+            'Poor' => [1, 1.99],
         ];
-
-        // Get the closest numeric rating from the provided ratings
-        $closestRating = round($numericRating * 2) / 2;
-
-        // If the rounded rating exists in the mapping, return the adjectival rating
-        if (isset($adjectivalRatings[$closestRating])) {
-            return $adjectivalRatings[$closestRating];
+    
+        // Iterate through adjectival ratings and return the corresponding rating
+        foreach ($adjectivalRatings as $rating => $range) {
+            if ($numericRating >= $range[0] && $numericRating <= end($range)) {
+                return $rating;
+            }
         }
-
-        // Handle cases where the exact rating isn't in the mapping
-        // You can adjust this logic based on how you want to handle such cases
+    
+        // If no matching range is found, return 'N/A'
         return 'N/A';
     }
 

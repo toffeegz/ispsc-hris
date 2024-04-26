@@ -46,10 +46,12 @@ class AwardRepository extends BaseRepository implements AwardRepositoryInterface
                 $employee = $awards->first()->employee;
                 $frequency = $awards->count();
                 $datesAwarded = $awards->pluck('date_awarded')->toArray();
-
+                $datesAwarded = $awards->pluck('date_awarded')->map(function ($date) {
+                    return Carbon::createFromFormat('Y-m-d H:i:s', $date)->format('M d, Y');
+                })->toArray();
                 $formattedAwards->push([
-                    'employee' => $employee,
-                    'department_name' => $employee->department->acronym,
+                    'employee' => $employee->full_name_formal,
+                    'department_name' => $employee->department ? $employee->department->acronym : "",
                     'award_name' => $awardName,
                     'frequency' => $frequency,
                     'date_awarded' => $datesAwarded,

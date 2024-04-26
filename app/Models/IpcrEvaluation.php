@@ -35,21 +35,24 @@ class IpcrEvaluation extends Model
     }
 
     public function getAdjectivalRatingAttribute()
-    {
-        // Define the mapping of overall ratings to adjectival ratings
+    { 
         $adjectivalRatings = [
-            5 => 'Outstanding',
-            4 => 'Very Satisfactory',
-            3 => 'Satisfactory',
-            2 => 'Unsatisfactory',
-            1 => 'Poor',
+            'Outstanding' => [5],
+            'Very Satisfactory' => [4, 4.99],
+            'Satisfactory' => [3, 3.99],
+            'Unsatisfactory' => [2, 2.99],
+            'Poor' => [1, 1.99],
         ];
     
-        // Get the total average rating and convert it to a whole number
-        $totalAverageRating = (int) round($this->final_average_rating);
+        // Iterate through adjectival ratings and return the corresponding rating
+        foreach ($adjectivalRatings as $rating => $range) {
+            if ($this->final_average_rating >= $range[0] && $this->final_average_rating <= end($range)) {
+                return $rating;
+            }
+        }
     
-        // Use the mapping to determine the adjectival rating
-        return $adjectivalRatings[$totalAverageRating] ?? 'Unknown';
+        // If no matching range is found, return 'N/A'
+        return 'N/A';
     }
     
 

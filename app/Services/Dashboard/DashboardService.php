@@ -54,7 +54,7 @@ class DashboardService implements DashboardServiceInterface
                 $attendances = Attendance::whereIn('employee_id', $departmentEmployees->pluck('id')->toArray())
                     ->whereBetween('date', [$start_date, $end_date])
                     ->get();
-                logger($attendances);
+
                 // Calculate total tardiness time (in minutes)
                 $totalTardinessTime = $attendances->sum('undertime');
 
@@ -78,7 +78,7 @@ class DashboardService implements DashboardServiceInterface
                 $tardinessData[] = [
                     'department' => $department->acronym,
                     'average_tardiness_minutes' => $averageTardinessTime,
-                    'average_tardiness_time' => $this->minutesToStr($averageTardinessTime),
+                    'average_tardiness_time' => $this->minutesToStr($averageTardinessTime) ?? '0 mins',
                     'total_occurrences' => $totalLateOccurrences,
                     'late_employees' => $lateEmployees,
                 ];
@@ -418,10 +418,14 @@ class DashboardService implements DashboardServiceInterface
     {
         $currentYear = date('Y');
         $fiveYearsAgo = $currentYear - 5;
-        $trainings = Training::whereYear('created_at', '>=', $fiveYearsAgo)
-            ->whereYear('created_at', '<=', $currentYear)
+        // $trainings = Training::whereYear('created_at', '>=', $fiveYearsAgo)
+        //     ->whereYear('created_at', '<=', $currentYear)
+        //     ->get();
+
+        $trainings = Training::whereYear('period_from', '>=', $fiveYearsAgo)
+            ->whereYear('period_from', '<=', $currentYear)
             ->get();
-    
+        
         $departments = Department::all();
     
         $departmentYearCounts = [];
@@ -453,7 +457,8 @@ class DashboardService implements DashboardServiceInterface
                         $departmentAcronym = 'ACAD';
                     }
     
-                    $year = $training->created_at->format('Y');
+                    $date = Carbon::createFromFormat('Y-m-d', $training->period_from);
+                    $year = $date->year;
                     $departmentYearCounts[$departmentAcronym][$year]++;
                 }
             }
