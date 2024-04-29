@@ -19,7 +19,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $appends = ['is_admin', 'employee_id', 'full_name_formal', 'role_name'];
+    protected $appends = ['is_admin', 'emp_id', 'full_name_formal', 'role_name', 'employee_id'];
     protected $fillable = [
         'name',
         'email',
@@ -79,9 +79,14 @@ class User extends Authenticatable
         return $this->role_id === Role::ID_ADMIN;
     }
 
-    public function getEmployeeIdAttribute()
+    public function getEmpIdAttribute()
     {
         return $this->employee ? $this->employee->employee_id : '';
+    }
+
+    public function getEmployeeIdAttribute()
+    {
+        return $this->employee ? $this->employee->id : '';
     }
 
     public function getFullNameFormalAttribute()

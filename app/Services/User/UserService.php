@@ -45,7 +45,6 @@ class UserService implements UserServiceInterface
 
                 $employee = Employee::find($attributes['employee_id'])
                     ->update(['user_id' => $user->id]);
-                logger($employee);
 
                 // Check if a token already exists for the email
                 $existingToken = PasswordResetToken::where('email', $user->email)->first();
