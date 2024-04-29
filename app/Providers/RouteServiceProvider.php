@@ -30,7 +30,7 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function () {
-            Route::middleware('api')->post('/api/import/leaves', [ApiImportController::class, 'importLeave'])->name('import.leaves');
+            // Route::middleware('api')->post('/api/import/leaves', [ApiImportController::class, 'importLeave'])->name('import.leaves');
             Route::middleware('api')
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
@@ -56,9 +56,9 @@ class RouteServiceProvider extends ServiceProvider
                 ->middleware(['api'])
                 ->group(base_path('routes/api/public/auth.php'));
 
-            Route::prefix('api')
-                ->middleware(['api'])
-                ->group(base_path('routes/api/public/option.php'));
+            // Route::prefix('api')
+            //     ->middleware(['api'])
+            //     ->group(base_path('routes/api/public/option.php'));
 
             // 
             // Route::prefix('api')
