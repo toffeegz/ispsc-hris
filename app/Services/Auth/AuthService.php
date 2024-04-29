@@ -2,18 +2,19 @@
 
 namespace App\Services\Auth;
 
-use Illuminate\Support\Facades\Log;
-use App\Repositories\User\UserRepositoryInterface;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException; 
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\Auth\ForgotPasswordEmail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 
+use App\Repositories\User\UserRepositoryInterface;
+use App\Mail\Auth\ForgotPasswordEmail;
 use App\Models\PasswordResetToken;
 
 class AuthService implements AuthServiceInterface
@@ -53,25 +54,44 @@ class AuthService implements AuthServiceInterface
             throw ValidationException::withMessages([$exception->getMessage()]);
         }
     }
+    // column user - is_admin = true / false
 
     public function forgotPassword(string $email)
     {
-        $user = $this->modelRepository->getByEmail($email);
         
-        if ($user) {
-            $token = Str::random(60);
-            PasswordResetToken::insert([
-                'email' => $email,
-                'token' => $token, 
-                'created_at' => Carbon::now()
-            ]);
+        DB::beginTransaction();
 
-            Mail::to($user->email)->send(new ForgotPasswordEmail($user, $token));
+        try {
+            $user = $this->modelRepository->getByEmail($email);
+            
+            if ($user) {
 
-            return 'Token generated and sent successfully';
+                // Check if a token already exists for the email
+                $existingToken = PasswordResetToken::where('email', $email)->first();
+
+                // If a token exists, delete it
+                if ($existingToken) {
+                    $existingToken->delete();
+                }
+
+                $token = Str::random(60);
+                PasswordResetToken::insert([
+                    'email' => $email,
+                    'token' => $token, 
+                    'created_at' => Carbon::now()
+                ]);
+
+                Mail::to($user->email)->send(new ForgotPasswordEmail($user, $token, $is_register = false));
+                DB::commit();
+                return 'Token generated and sent successfully';
+            }
+
+            throw new NotFoundException('User not found');
+
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw ValidationException::withMessages([$exception->getMessage()]);
         }
-
-        throw new NotFoundException('User not found');
     }
 
     public function resetPassword(string $token, string $password)

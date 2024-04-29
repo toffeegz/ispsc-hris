@@ -146,4 +146,22 @@ class DashboardController extends Controller
         $results = $this->modelService->awards();
         return $this->responseService->successResponse($this->name, $results);
     }
+
+    public function employeeTrainings()
+    {
+        $results = $this->modelService->employeeTrainings();
+        return $this->responseService->successResponse($this->name, $results);
+    }
+
+    public function employeeAwards()
+    {
+        $results = $this->modelService->employeeAwards();
+        return $this->responseService->successResponse($this->name, $results);
+    }
+
+    public function employeeIpcr()
+    {
+        $results = $this->modelService->employeeIpcr(request()->ipcr_period_id ?? null);
+        return $this->responseService->successResponse($this->name, $results);
+    }
 }

@@ -197,4 +197,58 @@ class ApiImportController extends Controller
 
         return response()->json(['message' => 'Award imported successfully'], 200);
     }
+
+    public function importLeave(Request $request)
+    {
+        // Award::truncate();
+        // Validate the request
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        // Retrieve file from request
+        $file = $request->file('file');
+
+        // Parse Excel file
+        $data = Excel::toArray([], $file);
+
+        // Assuming the first sheet is used and it contains data
+        $rows = $data[0];
+        unset($rows[0]);
+        // Map column headers to database fields
+        $columnMap = [
+            0 => 'employee_id',
+            1 => 'leave_type_id',
+            2 => 'date_start',
+            3 => 'date_end',
+            4 => 'credit',
+            5 => 'remarks',
+            6 => 'details_of_leave',
+        ];
+
+        // Loop through rows
+        foreach ($rows as $row) {
+            $data = [];
+            foreach ($columnMap as $excelIndex => $dbField) {
+                if (in_array($dbField, ['date_start','date_end']) && isset($row[$excelIndex])) {
+                    $date = intval($row[$excelIndex]);
+                    $data[$dbField] =  \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($date)->format('Y-m-d');
+                } else {
+                    // Assign other values as they are
+                    $data[$dbField] = $row[$excelIndex];
+                }
+                
+                // logger($columnMap);
+            }
+            $employee_name = $data['employee_id'];
+            $name_parts = explode(' ', $employee_name);
+
+            // Convert each part to uppercase
+            $first_name = strtoupper($name_parts[0]);
+            $last_name = strtoupper($name_parts[1]);
+
+        }
+
+        return response()->json(['message' => 'Leave imported successfully'], 200);
+    }
 }

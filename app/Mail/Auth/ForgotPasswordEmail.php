@@ -19,10 +19,12 @@ class ForgotPasswordEmail extends Mailable
      * @return void
      */
     public $user;
+    public $is_register;
     public $url;
-    public function __construct($user, $token)
+    public function __construct($user, $token, $is_register)
     {
         $this->user = $user;
+        $this->is_register = $is_register;
         $this->url = config('hris.frontend_url') . 'change-password?token=' . $token;
     }
 
@@ -33,8 +35,10 @@ class ForgotPasswordEmail extends Mailable
      */
     public function envelope()
     {
+        $subject = $this->is_register ? 'Account Creation Notification' : 'Password Reset Request';
+
         return new Envelope(
-            subject: 'Password Reset Request',
+            subject: $subject,
         );
     }
 

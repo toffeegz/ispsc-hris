@@ -19,11 +19,13 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $appends = ['is_admin', 'employee_id', 'full_name_formal', 'role_name'];
     protected $fillable = [
         'name',
         'email',
         'password',
         'google_id',
+        'role_id',
     ];
 
     /**
@@ -60,5 +62,35 @@ class User extends Authenticatable
                 });
             }
         );
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function employee()
+    {
+        return $this->hasOne(Employee::class);
+    }
+
+    public function getIsAdminAttribute()
+    {
+        return $this->role_id === Role::ID_ADMIN;
+    }
+
+    public function getEmployeeIdAttribute()
+    {
+        return $this->employee ? $this->employee->employee_id : '';
+    }
+
+    public function getFullNameFormalAttribute()
+    {
+        return $this->employee ? $this->employee->full_name_formal : '';
+    }
+
+    public function getRoleNameAttribute()
+    {
+        return $this->role ? $this->role->name : '';
     }
 }

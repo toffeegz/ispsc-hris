@@ -162,7 +162,18 @@ class Employee extends Model
         return null; 
     }
 
-    public function awards() {
+    public function awards() 
+    {
         return $this->hasMany(Award::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    
+    public function ipcrEvaluations()
+    {
+        return $this->hasMany(IpcrEvaluation::class, 'employee_id');
     }
 }

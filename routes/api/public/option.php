@@ -13,4 +13,6 @@ Route::prefix('options')->group(function() {
     Route::get('ipcr_subcategories', [OptionController::class, 'ipcr_subcategories'])->name('option.ipcr_subcategory');
     Route::get('ipcr_permanent_item_names', [OptionController::class, 'ipcr_permanent_item_names'])->name('option.ipcr_permanent_item_name');
     Route::get('employees', [OptionController::class, 'employees'])->name('option.employee');
+    Route::get('bind-employees', [OptionController::class, 'bindEmployees'])->name('option.bindEmployee');
+    Route::get('roles', [OptionController::class, 'roles'])->name('option.role');
 });

@@ -26,7 +26,7 @@ class UserController extends Controller
 
     public function index()
     {
-        $results = $this->modelRepository->lists(request(['search']));
+        $results = $this->modelRepository->lists(request(['search']), ['role', 'employee']);
         return $this->responseService->successResponse($this->name, $results);
     }
 
@@ -55,7 +55,11 @@ class UserController extends Controller
 
     public function update(ModelRequest $request, $id)
     {
-        $result = $this->modelRepository->update($request->all(), $id);
+        $validatedData = $request->validated();
+
+        $allowedColumns = array_keys($validatedData);
+        $data = $request->only($allowedColumns);
+        $result = $this->modelService->update($data, $id);
         return $this->responseService->updateResponse($this->name, $result);
     }
 

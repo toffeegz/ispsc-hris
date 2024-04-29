@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Department;
 use App\Models\Attendance;
@@ -553,7 +554,91 @@ class DashboardService implements DashboardServiceInterface
         return $finalData;
     }
 
+    // EMPLOYEE
+
+    public function employeeTrainings()
+    {
+        $user = Auth::user();
     
+        $currentYear = date('Y');
+    
+        $startYear = $currentYear - 5;
+    
+        $trainingCounts = [];
+    
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $trainingCount = $user->employee->trainings()
+            ->whereYear('period_from', $year)
+            ->count();
+    
+            $trainingCounts[] = [
+                'count' => $trainingCount,
+                'year' => $year,
+            ];
+        }
+    
+        $response = [
+            'years' => range($startYear, $currentYear),
+            'data' => $trainingCounts,
+        ];
+    
+        return $response;
+    }
+
+    public function employeeAwards()
+    {
+        $user = Auth::user();
+    
+        $currentYear = date('Y');
+    
+        $startYear = $currentYear - 5;
+    
+        $awardCounts = [];
+    
+        for ($year = $startYear; $year <= $currentYear; $year++) {
+            $awardCount = $user->employee->awards()
+            ->whereYear('date_awarded', $year)
+            ->count();
+    
+            $awardCounts[] = [
+                'count' => $awardCount,
+                'year' => $year,
+            ];
+        }
+    
+        $response = [
+            'years' => range($startYear, $currentYear),
+            'data' => $awardCounts,
+        ];
+    
+        return $response;
+    }
+
+    public function employeeIpcr(string $ipcr_period_id = null)
+    {
+        $data = [
+            'final_average_rating' => 'N/A',
+            'adjectival_rating' => 'N/A',
+        ];
+
+        $user = Auth::user();
+        $employee = $user->employee->load('ipcrEvaluations');
+    
+        if ($ipcr_period_id !== null) {
+            $ipcr_evaluation = $employee->ipcrEvaluations->where('ipcr_period_id', $ipcr_period_id)->first();
+        } else {
+            // If $ipcr_period_id is null, get the latest IPCR period
+            $latest_period = IpcrPeriod::latest('year')->latest('start_month')->first();
+            $ipcr_evaluation = $employee->ipcrEvaluations->where('ipcr_period_id', $latest_period->id)->first();
+        }
+
+        if($ipcr_evaluation != null) {
+            $data['final_average_rating'] = $ipcr_evaluation->final_average_rating;
+            $data['adjectival_rating'] = $ipcr_evaluation->adjectival_rating;
+        }
+
+        return $data;
+    }
     
 
 }

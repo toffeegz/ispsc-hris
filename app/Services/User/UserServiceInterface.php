@@ -6,4 +6,5 @@ use App\Repositories\User\UserRepositoryInterface;
 interface UserServiceInterface
 {
     public function store(array $attributes);
+    public function update(array $attributes, $id);
 }

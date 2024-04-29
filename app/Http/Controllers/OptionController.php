@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\Utils\Response\ResponseServiceInterface;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Department;
 use App\Models\Position;
@@ -13,6 +14,7 @@ use App\Models\IpcrPeriod;
 use App\Models\IpcrCategory;
 use App\Models\IpcrSubcategory;
 use App\Models\Employee;
+use App\Models\Role;
 
 class OptionController extends Controller
 {
@@ -127,4 +129,18 @@ class OptionController extends Controller
         return $this->responseService->successResponse($this->name, $results);
     }
 
+    public function roles()
+    {
+        $results = Role::select(['id', 'name'])->get();
+        return $this->responseService->successResponse($this->name, $results);
+    }
+
+    public function bindEmployees()
+    {
+        $results = Employee::select(['id', 'first_name', 'middle_name', 'last_name', 'employee_id'])
+        ->whereNull('user_id')
+        ->get();
+
+        return $this->responseService->successResponse($this->name, $results);
+    }
 }

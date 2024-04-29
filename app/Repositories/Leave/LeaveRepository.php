@@ -2,10 +2,11 @@
 
 namespace App\Repositories\Leave;
 
-use App\Models\Leave;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use App\Repositories\Base\BaseRepository;
-use Illuminate\Support\Facades\Log;
+use App\Models\Leave;
 
 class LeaveRepository extends BaseRepository implements LeaveRepositoryInterface
 {
@@ -19,6 +20,37 @@ class LeaveRepository extends BaseRepository implements LeaveRepositoryInterface
     public function __construct(Leave $model)
     {
         parent::__construct($model);
+    }
+
+    // LISTING
+    public function lists(array $search = [], array $relations = [], string $sortByColumn = 'created_at', string $sortBy = 'DESC')
+    {
+        $user = Auth::user();
+        if($user->is_admin === false) {
+            $this->model = $this->model->where('employee_id', $user->employee->id);
+        }
+
+        if($relations) {
+            $this->model = $this->model->with($relations);
+        }
+
+        return $this->model->filter($search)->orderBy($sortByColumn, $sortBy)->paginate(request('limit') ?? 10);
+    }
+
+    // ARCHIVES
+    public function archives(array $search = [], array $relations = [], string $sortByColumn = 'created_at', string $sortBy = 'DESC')
+    {
+        $user = Auth::user();
+        if($user->is_admin === false) {
+            $this->model = $this->model->where('employee_id', $user->employee->id);
+        }
+        
+        $this->model = $this->model->onlyTrashed();
+        if($relations) {
+            $this->model = $this->model->with($relations);
+        }
+
+        return $this->model->filter($search)->orderBy($sortByColumn, $sortBy)->paginate(request('limit') ?? 10);
     }
 
     public function store(array $params)

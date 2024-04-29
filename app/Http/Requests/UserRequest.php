@@ -31,9 +31,25 @@ class UserRequest extends FormRequest
             'email',
             Rule::unique('users')->ignore($user_id),
         ];
+
+        $email_rules = [
+            'required',
+            'max:255',
+            'email',
+            Rule::unique('users')->ignore($user_id),
+        ];
+    
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => $email_rules
+            'email' => $email_rules,
+            'role_id' => [
+                'required',
+                'exists:roles,id', // Ensure role_id exists in the roles table
+            ],
+            'employee_id' => [
+                'required',
+                'exists:employees,id', // Ensure employee_id exists in the employees table
+            ],
         ];
     }
 }
