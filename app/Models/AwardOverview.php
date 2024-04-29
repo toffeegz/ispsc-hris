@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class AwardOverview extends Model
 {
     use HasFactory;
-    protected $table = 'awards_overview';
+    protected $table = 'award_overview';
 
     public function scopeFilter($query, array $filters)
     {
