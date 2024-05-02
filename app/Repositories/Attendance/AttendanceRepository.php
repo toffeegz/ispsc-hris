@@ -27,10 +27,10 @@ class AttendanceRepository extends BaseRepository implements AttendanceRepositor
     public function lists(array $search = [], array $relations = [], string $sortByColumn = 'created_at', string $sortBy = 'DESC')
     {
         $user = Auth::user();
+        return $user;
         if($user->is_admin === false) {
             $this->model = $this->model->where('employee_id', $user->employee->id);
         }
-
         if($relations) {
             $this->model = $this->model->with($relations);
         }
