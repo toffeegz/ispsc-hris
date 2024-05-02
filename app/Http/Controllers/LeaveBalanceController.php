@@ -62,4 +62,10 @@ class LeaveBalanceController extends Controller
         $result = $this->modelRepository->restore($id);
         return $this->responseService->successResponse($this->name, $result);
     }
+
+    public function employeeBalance()
+    {
+        $result = $this->modelRepository->employeeBalance();
+        return $this->responseService->successResponse($this->name, $result);
+    }
 }

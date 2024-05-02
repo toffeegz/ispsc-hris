@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeaveBalanceController;
 
 Route::prefix('leave_balances')->group(function() {
+    Route::get('/employee', [LeaveBalanceController::class, 'employeeBalance'])->name('leave_balance.employeeBalance');
+
     Route::get('/', [LeaveBalanceController::class, 'index'])->name('leave_balance.list');
     Route::get('archive', [LeaveBalanceController::class, 'archive'])->name('leave_balance.archive');
     Route::get('/{leave_balance}', [LeaveBalanceController::class, 'show'])->name('leave_balance.show');
