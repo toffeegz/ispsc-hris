@@ -27,7 +27,7 @@ class EmployeeController extends Controller
 
     public function index()
     {
-        $results = $this->modelRepository->lists(request(['search']), ['department', 'position', 'employment_status', 'trainings', 'educational_backgrounds']);
+        $results = $this->modelRepository->lists(request(['search']), ['department', 'position', 'employment_status', 'trainings', 'educational_backgrounds'], 'last_name', 'ASC');
         return $this->responseService->successResponse($this->name, $results);
     }
 
