@@ -33,7 +33,7 @@ class Leave extends Model
     public function scopeFilter($query, array $filters)
     {
         $query->when(isset($filters['status']), function ($query) use ($filters) {
-            $query->where('status', $filters['status']);
+            $query->where('remarks', 'ilike', '%' . $filters['status'] . '%');
         });
 
         $search = $filters['search'] ?? null;
