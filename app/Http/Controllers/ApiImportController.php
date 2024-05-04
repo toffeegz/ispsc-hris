@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Department;
 use App\Models\Position;
 use App\Models\EmploymentStatus;
@@ -11,11 +15,104 @@ use App\Models\Employee;
 use App\Models\EmployeeTraining;
 use App\Models\Training;
 use App\Models\Award;
-use Carbon\Carbon;
-use Illuminate\Support\Arr;
+use App\Models\LeaveType;
+use App\Models\Leave;
+
 
 class ApiImportController extends Controller
 {
+    public function importLeave(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $request->validate([
+                'file' => 'required|mimes:xlsx,xls',
+            ]);
+        
+            $file = $request->file('file');
+        
+            $data = Excel::toArray([], $file);
+        
+            $rows = $data[0];
+            unset($rows[0]);
+            $columnMap = [
+                0 => 'employee_name',
+                1 => 'leave_type_id',
+                2 => 'date_start',
+                3 => 'date_end',
+                4 => 'credit',
+                5 => 'remarks',
+                6 => 'details_of_leave',
+                7 => 'employee_id',
+            ];
+            foreach ($rows as $row) {
+                $data = [];
+                foreach ($columnMap as $excelIndex => $dbField) {
+                    if (in_array($dbField, ['date_start', 'date_end']) && isset($row[$excelIndex])) {
+                        $date = intval($row[$excelIndex]);
+                        $data[$dbField] =  \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($date)->format('Y-m-d');
+                    } elseif ($dbField === 'credit' && isset($row[$excelIndex])) {
+                        // Extract numeric value from the credit field and remove " days"
+                        $credit = preg_replace('/\D/', '', $row[$excelIndex]); // Extract numeric value
+                        $data[$dbField] = intval($credit); // Convert to integer
+                    } else {
+                        $data[$dbField] = $row[$excelIndex];
+                    }
+                }
+                $employee_name = $data['employee_name'];
+                $name_parts = explode(' ', $employee_name);
+        
+                $first_name = strtoupper($name_parts[0]);
+                $last_name = strtoupper($name_parts[1]);
+        
+                $employee = Employee::where('first_name', $first_name)
+                    ->where('last_name', $last_name)
+                    ->first();
+    
+                if (!$employee) {
+                    // If employee not found by name, try finding by ID
+                    $employee = Employee::find($data['employee_id']);
+                }
+                
+                if(!$employee) {
+                    // logger($data['employee_name']);
+                }
+    
+                // check leave type
+                $leave_type = LeaveType::where('name', $data['leave_type_id'])->first();
+                if (!$leave_type) {
+                    // logger($data['leave_type_id']);
+                }
+    
+                if($employee && $leave_type) {
+                    $leave = [
+                        'employee_id' => $employee->id,
+                        'leave_type_id' => $leave_type->id,
+                        'date_start' => $data['date_start'],
+                        'date_end' => $data['date_end'],
+                        'credit' => $data['credit'],
+                        'remarks' => $data['remarks'],
+                        'details_of_leave' => $data['details_of_leave'],
+                        'status' => 0,
+                    ];
+                    Leave::create($leave);
+                } else {
+                    logger("NOTFOUND - " . $data['employee_name'] . " // " . $data['leave_type_id']);
+                }
+                
+            }
+            DB::commit();
+        
+            return response()->json(['message' => 'Leave imported successfully'], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return $e->getMessage();
+        }
+    }
+
     public function importEmployee(Request $request)
     {
         Employee::truncate();
@@ -198,57 +295,6 @@ class ApiImportController extends Controller
         return response()->json(['message' => 'Award imported successfully'], 200);
     }
 
-    public function importLeave(Request $request)
-    {
-        // Award::truncate();
-        // Validate the request
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls',
-        ]);
 
-        // Retrieve file from request
-        $file = $request->file('file');
-
-        // Parse Excel file
-        $data = Excel::toArray([], $file);
-
-        // Assuming the first sheet is used and it contains data
-        $rows = $data[0];
-        unset($rows[0]);
-        // Map column headers to database fields
-        $columnMap = [
-            0 => 'employee_id',
-            1 => 'leave_type_id',
-            2 => 'date_start',
-            3 => 'date_end',
-            4 => 'credit',
-            5 => 'remarks',
-            6 => 'details_of_leave',
-        ];
-
-        // Loop through rows
-        foreach ($rows as $row) {
-            $data = [];
-            foreach ($columnMap as $excelIndex => $dbField) {
-                if (in_array($dbField, ['date_start','date_end']) && isset($row[$excelIndex])) {
-                    $date = intval($row[$excelIndex]);
-                    $data[$dbField] =  \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($date)->format('Y-m-d');
-                } else {
-                    // Assign other values as they are
-                    $data[$dbField] = $row[$excelIndex];
-                }
-                
-                // logger($columnMap);
-            }
-            $employee_name = $data['employee_id'];
-            $name_parts = explode(' ', $employee_name);
-
-            // Convert each part to uppercase
-            $first_name = strtoupper($name_parts[0]);
-            $last_name = strtoupper($name_parts[1]);
-
-        }
-
-        return response()->json(['message' => 'Leave imported successfully'], 200);
-    }
+    
 }

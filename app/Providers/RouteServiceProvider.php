@@ -30,7 +30,6 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         $this->routes(function () {
-            // Route::middleware('api')->post('/api/import/leaves', [ApiImportController::class, 'importLeave'])->name('import.leaves');
             Route::middleware('api')
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
@@ -55,76 +54,6 @@ class RouteServiceProvider extends ServiceProvider
             Route::prefix('api')
                 ->middleware(['api'])
                 ->group(base_path('routes/api/public/auth.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/public/option.php'));
-
-            // 
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/attendance.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/award.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api', 'auth:sanctum'])
-            //     ->group(base_path('routes/api/dashboard.php'));
-
-            // Route::prefix('api')
-                // ->middleware(['api'])
-                // ->group(base_path('routes/api/department.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/employee.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/employment_status.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/ipcr_evaluation_item.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/ipcr_evaluation.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/ipcr_subcategory.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/leave_type.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/leave_balance.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/leave.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/opcr.php'));
-
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/position.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/training.php'));
-
-            // Route::prefix('api')
-            //     ->middleware(['api'])
-            //     ->group(base_path('routes/api/user.php'));
         });
     }
 }
