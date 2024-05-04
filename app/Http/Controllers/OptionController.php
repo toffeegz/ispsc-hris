@@ -139,6 +139,7 @@ class OptionController extends Controller
     {
         $results = Employee::select(['id', 'first_name', 'middle_name', 'last_name', 'employee_id'])
         ->whereNull('user_id')
+        ->orderBy('last_name', 'asc') 
         ->get();
 
         return $this->responseService->successResponse($this->name, $results);
