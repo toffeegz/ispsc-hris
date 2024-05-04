@@ -17,10 +17,91 @@ use App\Models\Training;
 use App\Models\Award;
 use App\Models\LeaveType;
 use App\Models\Leave;
+use App\Models\LeaveBalance;
 
 
 class ApiImportController extends Controller
 {
+    public function importLeaveBalances(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $request->validate([
+                'file' => 'required|mimes:xlsx,xls',
+            ]);
+        
+            $file = $request->file('file');
+        
+            $data = Excel::toArray([], $file);
+        
+            $rows = $data[0];
+            unset($rows[0]);
+            // logger($data);
+            $columnMap = [
+                0 => 'employee_name',
+                1 => 'remaining_sl',
+                2 => 'remaining_vl',
+                3 => 'year',
+                4 => 'employee_id',
+            ];
+            foreach ($rows as $row) {
+                $data = [];
+                foreach ($columnMap as $excelIndex => $dbField) {
+                    // if (in_array($dbField, ['date_start', 'date_end']) && isset($row[$excelIndex])) {
+                    //     $date = intval($row[$excelIndex]);
+                    //     $data[$dbField] =  \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($date)->format('Y-m-d');
+                    // } elseif ($dbField === 'credit' && isset($row[$excelIndex])) {
+                    //     // Extract numeric value from the credit field and remove " days"
+                    //     $credit = preg_replace('/\D/', '', $row[$excelIndex]); // Extract numeric value
+                    //     $data[$dbField] = intval($credit); // Convert to integer
+                    // } else {
+                        $data[$dbField] = $row[$excelIndex];
+                    // }
+                }
+                $employee_name = $data['employee_name'];
+                $name_parts = explode(' ', $employee_name);
+        
+                $first_name = strtoupper($name_parts[0]);
+                $last_name = strtoupper($name_parts[1]);
+        
+                $employee = Employee::where('first_name', $first_name)
+                    ->where('last_name', $last_name)
+                    ->first();
+    
+                if (!$employee) {
+                    // If employee not found by name, try finding by ID
+                    $employee = Employee::find($data['employee_id']);
+                }
+                
+                if(!$employee) {
+                    // logger($data['employee_name']);
+                }
+    
+                if($employee) {
+                    $leave_balance = [
+                        'employee_id' => $employee->id,
+                        'remaining_sl' => $data['remaining_sl'],
+                        'remaining_vl' => $data['remaining_vl'],
+                        'year' => $data['year'],
+                    ];
+                    LeaveBalance::create($leave_balance);
+                } else {
+                    logger("NOTFOUND - " . $data['employee_name']);
+                }
+                
+            }
+            DB::commit();
+        
+            return response()->json(['message' => 'Leave Balance imported successfully'], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return $e->getMessage();
+        }
+    }
+
     public function importLeave(Request $request)
     {
         DB::beginTransaction();

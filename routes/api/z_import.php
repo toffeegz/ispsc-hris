@@ -8,4 +8,5 @@ Route::prefix('import')->group(function() {
     Route::post('/trainings', [ApiImportController::class, 'importTraining'])->name('import.trainings');
     Route::post('/awards', [ApiImportController::class, 'importAward'])->name('import.awards');
     Route::post('/leaves', [ApiImportController::class, 'importLeave'])->name('import.leaves');
+    Route::post('/leave-balances', [ApiImportController::class, 'importLeaveBalances'])->name('import.leaveBalances');
 });
