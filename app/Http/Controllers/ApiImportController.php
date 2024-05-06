@@ -237,8 +237,6 @@ class ApiImportController extends Controller
                     // Assign other values as they are
                     $data[$dbField] = $row[$excelIndex];
                 }
-                
-                // logger($columnMap);
             }
             $employee_name = $data['employee_id'];
             $name_parts = explode(' ', $employee_name);

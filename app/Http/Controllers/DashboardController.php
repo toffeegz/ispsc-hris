@@ -31,7 +31,6 @@ class DashboardController extends Controller
         $frequency = $frequency ?? 'monthly';
         $start_date = $start_date ?? null;
         $end_date = $end_date ?? null;
-        logger($frequency . " // " . $start_date . " // " . $end_date);
 
         $results = $this->modelService->departmentWiseTardiness($frequency, $start_date, $end_date);
         // $results = array(

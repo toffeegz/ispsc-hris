@@ -86,7 +86,6 @@ class UserService implements UserServiceInterface
 
                 $employee = Employee::find($attributes['employee_id'])
                     ->update(['user_id' => $user->id]);
-                logger($employee);
 
                 DB::commit();
     
