@@ -23,8 +23,8 @@ class AwardRepository extends BaseRepository implements AwardRepositoryInterface
     {
         parent::__construct($model);
     }
-
-    public function overview(array $search = [], string $sortByColumn = 'last_date_awarded', string $sortBy = 'DESC')
+ 
+    public function overview(array $search = [], string $sortByColumn = 'employee', string $sortBy = 'ASC')
     {
         return AwardOverview::filter($search)->orderBy($sortByColumn, $sortBy)->paginate(request('limit') ?? 10);
     }
