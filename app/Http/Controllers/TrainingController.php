@@ -23,13 +23,13 @@ class TrainingController extends Controller
 
     public function index()
     {
-        $results = $this->modelRepository->lists(request(['search']));
+        $results = $this->modelRepository->lists(request(['search']), [], request()->sortByColumn ?? 'period_from', request()->sortBy ?? 'DESC');
         return $this->responseService->successResponse($this->name, $results);
     }
 
     public function archive()
     {
-        $results = $this->modelRepository->archives(request(['search']));
+        $results = $this->modelRepository->archives(request(['search']), [], request()->sortByColumn ?? 'period_from', request()->sortBy ?? 'DESC');
         return $this->responseService->successResponse($this->name, $results);
     }
 
