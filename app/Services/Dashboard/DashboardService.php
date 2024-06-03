@@ -434,9 +434,9 @@ class DashboardService implements DashboardServiceInterface
         foreach ($departments as $department) {
             $departmentAcronym = $department->acronym;
     
-            // If department is non_teaching, include in 'ACAD'
+            // If department is non_teaching, include in 'ADMIN'
             if ($department->non_teaching) {
-                $departmentAcronym = 'ACAD';
+                $departmentAcronym = 'ADMIN';
             }
     
             foreach (range($fiveYearsAgo, $currentYear) as $year) {
@@ -455,7 +455,7 @@ class DashboardService implements DashboardServiceInterface
                     $departmentAcronym = $department->acronym;
     
                     if ($department->non_teaching) {
-                        $departmentAcronym = 'ACAD';
+                        $departmentAcronym = 'ADMIN';
                     }
     
                     $date = Carbon::createFromFormat('Y-m-d', $training->period_from);
@@ -507,9 +507,9 @@ class DashboardService implements DashboardServiceInterface
             foreach (Department::all() as $department) {
                 $departmentAcronym = $department->acronym;
 
-                // If department is non_teaching, include in 'ACAD'
+                // If department is non_teaching, include in 'ADMIN'
                 if ($department->non_teaching) {
-                    $departmentAcronym = 'ACAD';
+                    $departmentAcronym = 'ADMIN';
                 }
 
                 $departmentYearCounts[$departmentAcronym][$year] = 0;
@@ -524,9 +524,9 @@ class DashboardService implements DashboardServiceInterface
                 $departmentAcronym = $department->acronym;
                 $year = $award->date_awarded->format('Y');
 
-                // If department is non_teaching, include in 'ACAD'
+                // If department is non_teaching, include in 'ADMIN'
                 if ($department->non_teaching) {
-                    $departmentAcronym = 'ACAD';
+                    $departmentAcronym = 'ADMIN';
                 }
 
                 $departmentYearCounts[$departmentAcronym][$year]++;

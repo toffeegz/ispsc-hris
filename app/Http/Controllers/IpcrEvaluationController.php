@@ -28,13 +28,13 @@ class IpcrEvaluationController extends Controller
 
     public function index(Request $request)
     {
-        $results = $this->modelRepository->index(request(['search']), $request->all(), ['employee']);
+        $results = $this->modelRepository->index(false, request(['search']), $request->all(), ['employee'], request()->sortByColumn ?? 'final_average_rating', request()->sortBy ?? 'DESC');
         return $this->responseService->successResponse($this->name, $results);
     }
 
-    public function archive()
+    public function archive(Request $request)
     {
-        $results = $this->modelRepository->archives(request(['search']));
+        $results = $this->modelRepository->index(true, request(['search']), $request->all(), ['employee'], request()->sortByColumn ?? 'final_average_rating', request()->sortBy ?? 'DESC');
         return $this->responseService->successResponse($this->name, $results);
     }
 
