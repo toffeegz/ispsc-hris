@@ -43,8 +43,8 @@ class UserService implements UserServiceInterface
 
             if($user && isset($attributes['email'])) {
 
-                $employee = Employee::find($attributes['employee_id'])
-                    ->update(['user_id' => $user->id]);
+                // $employee = Employee::find($attributes['employee_id'])
+                //     ->update(['user_id' => $user->id]);
 
                 // Check if a token already exists for the email
                 $existingToken = PasswordResetToken::where('email', $user->email)->first();
@@ -84,8 +84,8 @@ class UserService implements UserServiceInterface
 
             if($user && isset($attributes['email'])) {
 
-                $employee = Employee::find($attributes['employee_id'])
-                    ->update(['user_id' => $user->id]);
+                // $employee = Employee::find($attributes['employee_id'])
+                //     ->update(['user_id' => $user->id]);
 
                 DB::commit();
     
