@@ -20,8 +20,8 @@ return new class extends Migration
             $table->primary(['employee_id', 'training_id']);
 
             // Define foreign key constraints if needed
-            // $table->foreign('employee_id')->references('id')->on('employees');
-            // $table->foreign('training_id')->references('id')->on('trainings');
+            $table->foreign('employee_id')->references('id')->on('employees');
+            $table->foreign('training_id')->references('id')->on('trainings');
         });
     }
 
