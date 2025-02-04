@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('award_name');
             $table->string('remarks');
             $table->date('date_awarded');
-            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
+            // $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
