@@ -9,7 +9,9 @@ use Illuminate\Support\Carbon;
 class PasswordResetToken extends Model
 {
     use HasFactory;
-    // protected $primaryKey = 'email';
+    protected $primaryKey = 'email';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = [
         'email',
         'token',
