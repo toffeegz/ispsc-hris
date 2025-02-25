@@ -39,6 +39,7 @@ class UserService implements UserServiceInterface
 
         try {
             $attributes['password'] = Hash::make(Str::random(64));
+            $attributes['role_id'] = Role::ID_ADMIN;
             $user = $this->modelRepository->create($attributes);
 
             if($user && isset($attributes['email'])) {
