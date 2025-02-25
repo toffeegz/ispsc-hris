@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Mail\Auth\ForgotPasswordEmail;
 use App\Models\PasswordResetToken;
+use App\Models\User;
 
 class AuthService implements AuthServiceInterface
 {
@@ -86,7 +87,9 @@ class AuthService implements AuthServiceInterface
                 return 'Token generated and sent successfully';
             }
 
-            throw new NotFoundException('User not found');
+            throw ValidationException::withMessages([
+                'user' => ['User not found'],
+            ]);
 
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -105,10 +108,11 @@ class AuthService implements AuthServiceInterface
             }
 
             // Update user's password
-            $user = $this->modelRepository->getByEmail($passwordReset->email);
+            $user = User::where('email', $passwordReset->email)->first();
             
             if ($user) {
                 $user->password = Hash::make($password);
+                $user->email_verified_at = now();
                 $user->save();
 
                 // Delete the token after successful password reset
@@ -118,7 +122,9 @@ class AuthService implements AuthServiceInterface
                 return 'Password reset successful';
             }
             
-            throw new NotFoundException('User not found');
+            throw ValidationException::withMessages([
+                'user' => ['User not found'],
+            ]);
         }
 
         throw new AuthenticationException('Invalid token');
